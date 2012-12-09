@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+
+<testsuite
+    xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance'
+    xsi:noNamespaceSchemaLocation='junit.xsd'>
+    <properties>
+        <property name="zip" value=""/>
+        <property name="urls" value=""/>
+        <property name="html" value=""/>
+    </properties>
+    <testcase name="Cross Site Scripting" classname="URL" time="123">
+        <failure type="High" message="dsfsdfsds" >
+           
+        </failure>
+    </testcase>
+    <system-out ></system-out>
+    <system-err ></system-err>
+
+</testsuite>

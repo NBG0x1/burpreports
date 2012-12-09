@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/C:/_tino/sandbox/workspace_netbeans/BurpUnit/BurpUnit/src/com/burpunit/xsd/junit.xsd" uri="xml-resources/jaxb/junitreport/junit.xsd"/>
+</catalog>

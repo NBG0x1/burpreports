@@ -3,7 +3,7 @@ import burp.IBurpExtender;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IScanIssue;
-import com.burpunit.BurpUnitizer;
+import com.burpunit.BurpUnit;
 
 /*
  * To change this template, choose Tools | Templates
@@ -15,7 +15,7 @@ import com.burpunit.BurpUnitizer;
  */
 public class BurpExtender implements IBurpExtender {
 
-    private BurpUnitizer bsp = new BurpUnitizer();
+    private BurpUnit bsp = new BurpUnit();
 
     @Override
     public void setCommandLineArgs(String[] args) {
