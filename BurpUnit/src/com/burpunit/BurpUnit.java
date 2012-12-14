@@ -4,16 +4,13 @@ import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IScanIssue;
 import burp.IScanQueueItem;
-import generated.ObjectFactory;
-import generated.Testsuite;
-import generated.Testsuite.Properties.Property;
-import generated.Testsuite.Testcase.Failure;
+import com.burpunit.report.HTMLReportWriter;
+import com.burpunit.report.XUnitReportWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -37,29 +34,27 @@ public class BurpUnit {
     private String RESULT_ZIP_FILE_NAME;
     private String RESULT_ISSUES_FILE_NAME;
     private String RESULT_URLS_FILE_NAME;
+    private String RESULT_XUNIT_FILE_NAME;
+    
     private static final String RESULT_ZIP_FILE_POSTFIX = ".zip";
     private static final String RESULT_ISSUES_FILE_POSTFIX = ".html";
     private static final String RESULT_URLS_FILE_POSTFIX = ".urls";
+    private static final String RESULT_XUNIT_FILE_POSTFIX = ".xml";
+    
     private static final int SCAN_QUEUE_CHECK_INTERVALL = 2000;
     private File outsession;
-    private BufferedWriter outissues;
     private BufferedWriter outurls;
     private BufferedReader urlsFromFileToScanReader;
     private IBurpExtenderCallbacks mcallBacks;
     private final List<IScanQueueItem> scanqueue = Collections.synchronizedList(new ArrayList<IScanQueueItem>());
-    private final Map<String, String> outurlsList = new HashMap();
+//    private final Map<String, String> outurlsList = new HashMap();
     private IScanQueueItem isqi;
     private boolean serviceIsHttps = false;
     private boolean checkerStarted = false;
-    private ObjectFactory oFac;
-    private Testsuite testSuite;
-    private Property prop;
-    private Property prop1;
-    private Property prop2;
-    private Property prop3;
-    private Property prop4;
-    private int countFailures;
-    private Failure testCaseFailure;
+    
+    private Map<String,String> propMap;
+    private HTMLReportWriter htmlReport;
+    private XUnitReportWriter xUnitReport;
 
     /**
      * Enum for Burp Suite Tools.
@@ -69,11 +64,15 @@ public class BurpUnit {
 
         spider, scanner;
     }
+    
+    public static enum Properties {
+        URLS_TO_SCAN_FILE_NAME, RESULT_ZIP_FILE_NAME, RESULT_ISSUES_FILE_NAME, RESULT_URLS_FILE_NAME, RESULT_XUNIT_FILE_NAME;
+    }
 
     /**
      * Enum for several issues prios.
      */
-    private enum IssuePriorities {
+    public static enum IssuePriorities {
 
         Information, Medium, High;
     }
@@ -107,26 +106,40 @@ public class BurpUnit {
             RESULT_ZIP_FILE_NAME = args[1] + RESULT_ZIP_FILE_POSTFIX;
             RESULT_ISSUES_FILE_NAME = args[1] + RESULT_ISSUES_FILE_POSTFIX;
             RESULT_URLS_FILE_NAME = args[1] + RESULT_URLS_FILE_POSTFIX;
+            RESULT_XUNIT_FILE_NAME = args[1] + RESULT_XUNIT_FILE_POSTFIX;
 
             try {
                 urlsFromFileToScanReader = new BufferedReader(new FileReader(URLS_TO_SCAN_FILE_NAME));
-                outsession = new File(RESULT_ZIP_FILE_NAME);
-                outissues = new BufferedWriter(new FileWriter(new File(RESULT_ISSUES_FILE_NAME)));
-                outurls = new BufferedWriter(new FileWriter(new File(RESULT_URLS_FILE_NAME)));
+                outsession = new File(RESULT_ZIP_FILE_NAME);              
+                outurls = new BufferedWriter(new FileWriter(new File(RESULT_URLS_FILE_NAME),false));
 
                 System.out.println("File Setup:\n---------------------------");
                 System.out.println("1. URLS TO SCAN FILE: \t" + URLS_TO_SCAN_FILE_NAME);
                 System.out.println("2. RESULT ZIP FILE: \t" + RESULT_ZIP_FILE_NAME);
                 System.out.println("3. RESULT ISSUE FILE: \t" + RESULT_ISSUES_FILE_NAME);
                 System.out.println("4. RESULT URL FILE: \t" + RESULT_URLS_FILE_NAME);
-
-                initializeTestSuite();
+                System.out.println("5. RESULT XUNIT FILE: \t" + RESULT_XUNIT_FILE_NAME);
+                
+                propMap = new HashMap();
+                propMap.put(Properties.URLS_TO_SCAN_FILE_NAME.toString(), URLS_TO_SCAN_FILE_NAME);
+                propMap.put(Properties.RESULT_ZIP_FILE_NAME.toString(), RESULT_ZIP_FILE_NAME);
+                propMap.put(Properties.RESULT_ISSUES_FILE_NAME.toString(), RESULT_ISSUES_FILE_NAME);
+                propMap.put(Properties.RESULT_URLS_FILE_NAME.toString(), RESULT_URLS_FILE_NAME);
+                propMap.put(Properties.RESULT_XUNIT_FILE_NAME.toString(), RESULT_XUNIT_FILE_NAME);
+                
+                htmlReport = new HTMLReportWriter();
+                htmlReport.initilizeIssueReportWriter(propMap);
+                
+                xUnitReport = new XUnitReportWriter();
+                xUnitReport.initilizeIssueReportWriter(propMap);
             } catch (Exception ex) {
-                System.out.println("Error on command line setup: " + ex.getMessage());
+                ex.printStackTrace();
                 printUsage();
+                System.exit(0);
             }
         } else {
             printUsage();
+            System.exit(0);
         }
     }
 
@@ -153,7 +166,7 @@ public class BurpUnit {
                 System.out.println("\nStarting the scanner");
             }
         } catch (Exception ex) {
-            System.out.println("Error while spidering: " + ex.getMessage());
+            ex.printStackTrace();
             mcallBacks.exitSuite(false);
         }
 
@@ -176,7 +189,8 @@ public class BurpUnit {
             if (Tools.spider.toString().equals(toolName) && !messageIsRequest && mcallBacks.isInScope(messageInfo.getUrl())) {
 
                 serviceIsHttps = "https".equals(messageInfo.getProtocol()) ? true : false;
-                outurlsList.put(messageInfo.getUrl().toString(), messageInfo.getUrl().toString());
+//                outurlsList.put(messageInfo.getUrl().toString(), messageInfo.getUrl().toString());
+                outurls.write(messageInfo.getUrl().toString()+"\n");
 
                 isqi = mcallBacks.doActiveScan(messageInfo.getHost(), 80, serviceIsHttps, messageInfo.getRequest());
 
@@ -190,7 +204,7 @@ public class BurpUnit {
                 }
             }
         } catch (Exception ex) {
-            System.out.println("Error while scanning: " + ex.getMessage());
+            ex.printStackTrace();
             mcallBacks.exitSuite(false);
         }
     }
@@ -228,7 +242,7 @@ public class BurpUnit {
                     }
                     mcallBacks.exitSuite(false);
                 } catch (InterruptedException ex) {
-                    System.out.println("Error on check thread: " + ex.getMessage());
+                    ex.printStackTrace();
                     mcallBacks.exitSuite(false);
                 }
             }
@@ -243,77 +257,28 @@ public class BurpUnit {
      */
     public void newScanIssue(IScanIssue issue) {
         try {
+            
+            htmlReport.addIssueToReport(issue);
+            xUnitReport.addIssueToReport(issue);
+                
             if (!IssuePriorities.Information.toString().equals(issue.getSeverity())) {
                 System.out.println("scanner: " + issue.getSeverity() + " " + issue.getIssueName() + ": " + issue.getUrl());
-                outissues.write("<h1>" + issue.getIssueName() + "</h1>"
-                        + "<table>"
-                        + "<tr><td><b>Issue:</b></td><td>" + issue.getIssueName() + "</td></tr>"
-                        + "<tr><td><b>Severity:</b></td><td>" + issue.getSeverity() + "</td></tr>"
-                        + "<tr><td><b>Confidence:</b></td><td>" + issue.getConfidence() + "</td></tr>"
-                        + "<tr><td><b>URL:</b></td><td>" + issue.getUrl() + "</td></tr>"
-                        + "</table>"
-                        + "<h2>Issue Detail</h2>"
-                        + "<p>" + issue.getIssueDetail() + "</p>"
-                        + "<h2>Issue Background</h2>"
-                        + "<p>" + issue.getIssueBackground() + "</p>"
-                        + "<h2>Issue Remediation</h2>"
-                        + "<p>" + issue.getRemediationBackground() + "</p>");
-                ++countFailures;
-                addIssueAsFailureToBurpUnitReport(issue);
+    
+                (new Runnable() {
+
+                    @Override
+                    public void run() {
+                        try {
+                            mcallBacks.saveState(outsession);
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+                }).run();
+               
             }
         } catch (Exception e) {
-            System.out.println("Error writing to issue file: " + e.getMessage());
-        }
-    }
-
-    private void initializeTestSuite() {
-        oFac = new ObjectFactory();
-        testSuite = oFac.createTestsuite();
-
-        // i need a fluent interface miau
-        prop1 = oFac.createTestsuitePropertiesProperty();
-        prop2 = oFac.createTestsuitePropertiesProperty();
-        prop3 = oFac.createTestsuitePropertiesProperty();
-        prop4 = oFac.createTestsuitePropertiesProperty();
-        
-        prop1.setName("URLS_TO_SCAN_FILE_NAME");
-        prop1.setValue(URLS_TO_SCAN_FILE_NAME);
-        prop2.setName("RESULT_ZIP_FILE_NAME");
-        prop2.setValue(RESULT_ZIP_FILE_NAME);
-        prop3.setName("RESULT_ISSUES_FILE_NAME");
-        prop3.setValue(RESULT_ISSUES_FILE_NAME);
-        prop4.setName("RESULT_URLS_FILE_NAME");
-        prop4.setValue(RESULT_URLS_FILE_NAME);
-        
-        testSuite.getProperties().getProperty().add(prop1);
-        testSuite.getProperties().getProperty().add(prop2);
-        testSuite.getProperties().getProperty().add(prop3);
-        testSuite.getProperties().getProperty().add(prop4);
-
-    }
-
-    private void addIssueAsFailureToBurpUnitReport(IScanIssue issue) {
-        testCaseFailure = oFac.createTestsuiteTestcaseFailure();
-        testSuite.getTestcase().add(null);
-    }
-
-    /**
-     * Saves the state of Burp with all settings, found issues etc. to a file.
-     * This file could be open within Burp.
-     *
-     * @throws IOException
-     */
-    private void saveBurpSuiteStateToFile() throws IOException {
-        try {
-            mcallBacks.saveState(outsession);
-
-            Iterator<String> scannedURLsIT = outurlsList.keySet().iterator();
-            while (scannedURLsIT.hasNext()) {
-                outurls.write(scannedURLsIT.next() + "\n");
-            }
-        } catch (Exception ex) {
-            System.out.println("Error writing to urls + sessions files: " + ex.getMessage());
-            mcallBacks.exitSuite(false);
+            e.printStackTrace();
         }
     }
 
@@ -323,11 +288,11 @@ public class BurpUnit {
      */
     public void applicationClosing() {
         try {
-            saveBurpSuiteStateToFile();
             outurls.close();
-            outissues.close();
+            htmlReport.closeReport();
+            xUnitReport.closeReport();
         } catch (Exception ex) {
-            System.out.println("Error: " + ex.getMessage());
+            ex.printStackTrace();
         }
     }
 }
