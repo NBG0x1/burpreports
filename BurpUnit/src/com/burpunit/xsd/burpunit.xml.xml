@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <testsuite name="BurpSuite Test" timestamp="2012-12-14T17:18:34.260+01:00" hostname="diverse, see name at the testcases" tests="10" failures="6" errors="0" time="32274" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="junit.xsd">
     <properties>
-        <property name="RESULT_URLS_FILE_NAME" value="brigitte_2012_12_14.urls"/>
-        <property name="RESULT_ISSUES_FILE_NAME" value="brigitte_2012_12_14.html"/>
-        <property name="RESULT_XUNIT_FILE_NAME" value="brigitte_2012_12_14.xml"/>
-        <property name="RESULT_ZIP_FILE_NAME" value="brigitte_2012_12_14.zip"/>
+        <property name="RESULT_URLS_FILE_NAME" value="burpunit.urls"/>
+        <property name="RESULT_ISSUES_FILE_NAME" value="burpunit.html"/>
+        <property name="RESULT_XUNIT_FILE_NAME" value="burpunit.xml"/>
+        <property name="RESULT_ZIP_FILE_NAME" value="burpunit.zip"/>
         <property name="URLS_TO_SCAN_FILE_NAME" value="urls_to_scan.txt"/>
     </properties>
     <testcase name="http://localhost:80/rf/faq.php" classname="" time="4062">
