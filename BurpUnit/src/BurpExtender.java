@@ -1,4 +1,3 @@
-
 import burp.IBurpExtender;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
@@ -6,8 +5,7 @@ import burp.IScanIssue;
 import com.burpunit.BurpUnit;
 
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * BurpExtender delegate
  */
 /**
  *
@@ -15,31 +13,31 @@ import com.burpunit.BurpUnit;
  */
 public class BurpExtender implements IBurpExtender {
 
-    private BurpUnit bsp = new BurpUnit();
+    private BurpUnit burpUnit = new BurpUnit();
 
     @Override
     public void setCommandLineArgs(String[] args) {
-        bsp.setCommandLineArgs(args);
+        burpUnit.setCommandLineArgs(args);
     }
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
-        bsp.registerExtenderCallbacks(callbacks);
+        burpUnit.registerExtenderCallbacks(callbacks);
     }
 
     @Override
     public void processHttpMessage(String toolName, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
-        bsp.processHttpMessage(toolName, messageIsRequest, messageInfo);
+        burpUnit.processHttpMessage(toolName, messageIsRequest, messageInfo);
     }
 
     @Override
     public void newScanIssue(IScanIssue issue) {
-        bsp.newScanIssue(issue);
+        burpUnit.newScanIssue(issue);
     }
 
     @Override
     public void applicationClosing() {
-        bsp.applicationClosing();
+        burpUnit.applicationClosing();
     }
 
     @Override

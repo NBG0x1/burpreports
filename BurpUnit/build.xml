@@ -11,6 +11,7 @@
     <description>Builds, tests, and runs the project BurpUnit.</description>
     <import file="nbproject/build-impl.xml"/>
     <property name="burp.suite.dir" value="C:\_tino\sandbox\burp\"/>
+    <property name="burpunit.config.xml" value="src/com/burpunit/cfg/burp_unit_config.xml"/>
     <target name="-pre-jar">
         <echo message="Copying the service definitions into the META-INF before the jar is bundled."/>
         <copy todir="${build.classes.dir}/META-INF">
@@ -20,6 +21,9 @@
     <target name="-post-jar">
         <echo message="Deploying the jar: ${dist.jar.resolved} to the Burp Suite directory: ${burp.suite.dir}."/>
         <copy file="${dist.jar.resolved}" todir="${burp.suite.dir}"/>
+        
+        <echo message="Deploying the config xml: ${burpunit.config.xml} to the Burp Suite directory: ${burp.suite.dir}."/>
+        <copy file="${burpunit.config.xml}" todir="${burp.suite.dir}"/>
     </target>
     <!--
 

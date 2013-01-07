@@ -6,12 +6,10 @@ package com.burpunit.report;
 
 import burp.IScanIssue;
 import com.burpunit.BurpUnit;
-import generated.ObjectFactory;
-import generated.Testsuite;
-import generated.Testsuite.Properties;
-import generated.Testsuite.Properties.Property;
-import generated.Testsuite.Testcase;
-import generated.Testsuite.Testcase.Failure;
+import com.burpunit.report.Testsuite.Properties;
+import com.burpunit.report.Testsuite.Properties.Property;
+import com.burpunit.report.Testsuite.Testcase;
+import com.burpunit.report.Testsuite.Testcase.Failure;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;

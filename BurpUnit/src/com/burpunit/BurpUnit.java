@@ -4,13 +4,14 @@ import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IScanIssue;
 import burp.IScanQueueItem;
+import com.burpunit.cfg.BurpUnitConfig;
 import com.burpunit.report.IssueReportWritable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,12 +21,17 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
+import javax.xml.bind.JAXB;
 
 /**
- * BurpUnitizer uses the BurpExtender Interfaces for a headless usage of the
- * spider and scanner of Burp Suite. As a result a unittest like file is
- * generated. The file can be used on any Continuous Integrations systems to
- * monitor the results.
+ * ATTENTION: COMPILE WITH JDK6!!!
+ * 
+ * SET THE CORRECT FOLDER OF THE BURP SUITE DISTRIBUTION IN BUILD:XML!
+ * 
+ * BurpUnit uses the BurpExtender Interfaces for a headless usage of the
+ * spider and scanner of Burp Suite. Several report writer could be registered 
+ * to generate reports. The XUnitReportWriter report can be used for an 
+ * Continuous Integrations systems to monitor the results.
  *
  * @author runtz
  */
@@ -115,6 +121,8 @@ public class BurpUnit {
 
             try {
 
+                BurpUnitConfig burpUnitConfig = JAXB.unmarshal(new FileInputStream(new File("burp_unit_config.xml")), BurpUnitConfig.class);
+                                
                 urlsFromFileToScanReader = new BufferedReader(new FileReader(urlsToScanFileName));
                 outsession = new File(resultBurpFileName);
                 outurls = new BufferedWriter(new FileWriter(resultUrlsFileName));
@@ -126,6 +134,7 @@ public class BurpUnit {
                 System.out.println("4. RESULT URL FILE: \t" + resultUrlsFileName);
                 System.out.println("5. RESULT XUNIT FILE: \t" + resultXUnitFileName);
                 System.out.println("6. BURP CONFIG PROP FILE: \t" + burpConfigPropertiesFileName);
+                System.out.println("7. CONFIG:" + burpUnitConfig.getGeneralSettings().getMaxScanQueueSize().getSize());
 
                 propMap = new HashMap();
                 propMap.put(BurpUnitProperties.URLS_TO_SCAN_FILE_NAME.toString(), urlsToScanFileName);
@@ -141,6 +150,9 @@ public class BurpUnit {
                     System.out.println(issueReportWriterService.getClass());
                     issueReportWriterService.initilizeIssueReportWriter(propMap);
                 }
+                
+                //IssueReportWritable irw = IssueReportWritable.class.cast(Class.forName("com.burpunit.report.HTMLReportWriter"));
+                
             } catch (Exception ex) {
                 ex.printStackTrace();
                 printUsage();
@@ -201,29 +213,6 @@ public class BurpUnit {
             mcallBacks.exitSuite(false);
         }
 
-    }
-
-    /**
-     *
-     * @param mcallBacks
-     * @param configFileName
-     */
-    private void saveBurpConfigPropertiesToFile(final IBurpExtenderCallbacks mcallBacks, String configFileName) {
-        if (null != mcallBacks) {
-            try {
-                System.out.println("\nLoading session");
-                configMap = mcallBacks.saveConfig();
-
-                configMapFileToWrite = new BufferedWriter(new FileWriter(new File(configFileName)));
-                for (Iterator<String> keyIt = configMap.keySet().iterator(); keyIt.hasNext();) {
-                    String key = keyIt.next();
-                    configMapFileToWrite.write(key + "=" + configMap.get(key) + "\r\n");
-                }
-                configMapFileToWrite.close();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-        }
     }
 
     /**

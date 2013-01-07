@@ -1,10 +1,20 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='BurpUnit' version='1.0'>
-	<schema type='-xmlschema' package='' name='junitreport'>
+	<schema type='-xmlschema' package='com.burpunit.cfg' name='burp_unit_config'>
 		<xjc-options>
 		</xjc-options>
 		<schema-sources>
-			<schema-source location='xml-resources/jaxb/junitreport/junit.xsd' origLocation='src/com/burpunit/xsd/junit.xsd'/>
+			<schema-source location='xml-resources/jaxb/burp_unit_config/burp_unit_config.xsd' origLocation='src/com/burpunit/cfg/xsd/burp_unit_config.xsd'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+	<schema type='-xmlschema' package='com.burpunit.report' name='x_unit'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/x_unit/x_unit.xsd' origLocation='src/com/burpunit/report/xsd/x_unit.xsd'/>
 		</schema-sources>
 		<bindings>
 		</bindings>

@@ -11,19 +11,33 @@
     <target name="jaxb-code-generation" depends="xjc-typedef-target,-do-init,-init-macrodef-javac">
         <mkdir dir="${build.generated.sources.dir}/jaxb" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
         <mkdir dir="build/generated/jaxbCache" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
-        <mkdir dir="build/generated/jaxbCache/junitreport"/>
-        <xjc destdir="build/generated/jaxbCache/junitreport" catalog="catalog.xml">
+        <mkdir dir="build/generated/jaxbCache/burp_unit_config"/>
+        <xjc package="com.burpunit.cfg" destdir="build/generated/jaxbCache/burp_unit_config" catalog="catalog.xml">
             <classpath>
                 <pathelement location="${src.dir}"/>
                 <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
             </classpath>
             <arg value="-xmlschema"/>
-            <schema file="xml-resources/jaxb/junitreport/junit.xsd"/>
-            <depends file="xml-resources/jaxb/junitreport/junit.xsd"/>
-            <produces dir="build/generated/jaxbCache/junitreport"/>
+            <schema file="xml-resources/jaxb/burp_unit_config/burp_unit_config.xsd"/>
+            <depends file="xml-resources/jaxb/burp_unit_config/burp_unit_config.xsd"/>
+            <produces dir="build/generated/jaxbCache/burp_unit_config"/>
         </xjc>
         <copy todir="${build.generated.sources.dir}/jaxb">
-            <fileset dir="build/generated/jaxbCache/junitreport"/>
+            <fileset dir="build/generated/jaxbCache/burp_unit_config"/>
+        </copy>
+        <mkdir dir="build/generated/jaxbCache/x_unit"/>
+        <xjc package="com.burpunit.report" destdir="build/generated/jaxbCache/x_unit" catalog="catalog.xml">
+            <classpath>
+                <pathelement location="${src.dir}"/>
+                <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
+            </classpath>
+            <arg value="-xmlschema"/>
+            <schema file="xml-resources/jaxb/x_unit/x_unit.xsd"/>
+            <depends file="xml-resources/jaxb/x_unit/x_unit.xsd"/>
+            <produces dir="build/generated/jaxbCache/x_unit"/>
+        </xjc>
+        <copy todir="${build.generated.sources.dir}/jaxb">
+            <fileset dir="build/generated/jaxbCache/x_unit"/>
         </copy>
     </target>
 </project>
