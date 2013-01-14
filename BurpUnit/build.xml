@@ -12,12 +12,12 @@
     <import file="nbproject/build-impl.xml"/>
     <property name="burp.suite.dir" value="C:\_tino\sandbox\burp\"/>
     <property name="burpunit.config.xml" value="src/com/burpunit/cfg/burp_unit_config.xml"/>
-    <target name="-pre-jar">
+    <!--target name="-pre-jar">
         <echo message="Copying the service definitions into the META-INF before the jar is bundled."/>
         <copy todir="${build.classes.dir}/META-INF">
             <fileset dir="META-INF"/>
         </copy>
-    </target>
+    </target-->
     <target name="-post-jar">
         <echo message="Deploying the jar: ${dist.jar.resolved} to the Burp Suite directory: ${burp.suite.dir}."/>
         <copy file="${dist.jar.resolved}" todir="${burp.suite.dir}"/>
