@@ -5,7 +5,7 @@
 package com.burpunit.report;
 
 import burp.IScanIssue;
-import java.util.Map;
+import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
 
 /**
  *
@@ -13,10 +13,12 @@ import java.util.Map;
  */
 public interface IssueReportWritable {
     
-    public void initilizeIssueReportWriter(Map<String,String> properties);
+    public IssueReportWritable initilizeIssueReportWriter(final ReportWriter writerConfig, final String resultsFileNameSibling);
     
-    public void addIssueToReport(IScanIssue issue);
+    public void addIssueToReport(final IScanIssue issue);
     
     public void closeReport();
+    
+    public String getOutputFilePath();
     
 }

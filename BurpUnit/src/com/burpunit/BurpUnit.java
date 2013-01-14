@@ -5,6 +5,8 @@ import burp.IHttpRequestResponse;
 import burp.IScanIssue;
 import burp.IScanQueueItem;
 import com.burpunit.cfg.BurpUnitConfig;
+import com.burpunit.cfg.BurpUnitConfig.GeneralSettings.BurpConfigOverwrites.Property;
+import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
 import com.burpunit.report.IssueReportWritable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -20,18 +22,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ServiceLoader;
 import javax.xml.bind.JAXB;
 
 /**
  * ATTENTION: COMPILE WITH JDK6!!!
- * 
+ *
  * SET THE CORRECT FOLDER OF THE BURP SUITE DISTRIBUTION IN BUILD:XML!
- * 
- * BurpUnit uses the BurpExtender Interfaces for a headless usage of the
- * spider and scanner of Burp Suite. Several report writer could be registered 
- * to generate reports. The XUnitReportWriter report can be used for an 
- * Continuous Integrations systems to monitor the results.
+ *
+ * BurpUnit uses the BurpExtender Interfaces for a headless usage of the spider
+ * and scanner of Burp Suite. Several report writer could be registered to
+ * generate reports. The XUnitReportWriter report can be used for an Continuous
+ * Integrations systems to monitor the results.
  *
  * @author runtz
  */
@@ -39,30 +40,24 @@ public class BurpUnit {
 
     private String urlsToScanFileName;
     private String resultBurpFileName;
-    private String resultIssuesFileName;
     private String resultUrlsFileName;
-    private String resultXUnitFileName;
     private static final String RESULT_BURP_FILE_POSTFIX = ".burp";
-    private static final String RESULT_ISSUES_FILE_POSTFIX = ".html";
     private static final String RESULT_URLS_FILE_POSTFIX = ".urls";
-    private static final String RESULT_XUNIT_FILE_POSTFIX = ".xml";
-    private static final int SCAN_QUEUE_CHECK_INTERVALL = 2000;
+    private int SCAN_QUEUE_CHECK_INTERVALL = 2000;
+    private int MAX_SCAN_QUEUE_SIZE = 100;
     private File outsession;
     private BufferedWriter outurls;
     private BufferedReader urlsFromFileToScanReader;
     private IBurpExtenderCallbacks mcallBacks;
     private final List<IScanQueueItem> scanqueue = Collections.synchronizedList(new ArrayList<IScanQueueItem>());
-//    private final Map<String, String> outurlsList = new HashMap();
     private IScanQueueItem isqi;
     private boolean serviceIsHttps = false;
     private boolean checkerStarted = false;
-    private Map<String, String> propMap;
-    private Map<String, String> configMap;
-    private BufferedReader configMapFileToRead;
-    private BufferedWriter configMapFileToWrite;
     long startMillis;
     private String burpConfigPropertiesFileName;
-    private ServiceLoader<IssueReportWritable> issueReportWriterServices;
+    private List<IssueReportWritable> issueReportWritableObjectList;
+    private List<ReportWriter> reportWriterConfigList;
+    private BurpUnitConfig burpUnitConfig;
 
     /**
      * Enum for Burp Suite Tools.
@@ -90,7 +85,7 @@ public class BurpUnit {
      * Convinience method for usage description
      */
     private void printUsage() {
-        System.out.println("Usage: burp.sh [FILE WITH URLS TO SPIDER & SCAN] [FILENAME TO STORE REPORTS]");
+        System.out.println("Usage: burp.sh [RESULT FILE SIBBLING, E.G. <SITE>_<YYMMDD>] [OPT: FILENAME PATH OF THE BURP UNIT CONFIGURATION FILE]");
     }
 
     /**
@@ -111,48 +106,62 @@ public class BurpUnit {
      * @param args
      */
     public void setCommandLineArgs(String[] args) {
-        if (args.length == 3) {
-            urlsToScanFileName = args[0];
-            resultBurpFileName = args[1] + RESULT_BURP_FILE_POSTFIX;
-            resultIssuesFileName = args[1] + RESULT_ISSUES_FILE_POSTFIX;
-            resultUrlsFileName = args[1] + RESULT_URLS_FILE_POSTFIX;
-            resultXUnitFileName = args[1] + RESULT_XUNIT_FILE_POSTFIX;
-            burpConfigPropertiesFileName = args[2];
+        if (args.length > 0 && args.length < 3) {
+            String resultsFileNameSibling = "";
+
+            if (args.length > 0) {
+                resultsFileNameSibling = args[0];
+            }
+
+            if (args.length == 2) {
+                burpConfigPropertiesFileName = args[1];
+            } else {
+                burpConfigPropertiesFileName = "burp_unit_config.xml";
+            }
+
+            resultBurpFileName = resultsFileNameSibling + RESULT_BURP_FILE_POSTFIX;
+            resultUrlsFileName = resultsFileNameSibling + RESULT_URLS_FILE_POSTFIX;
 
             try {
 
-                BurpUnitConfig burpUnitConfig = JAXB.unmarshal(new FileInputStream(new File("burp_unit_config.xml")), BurpUnitConfig.class);
-                                
+                burpUnitConfig = JAXB.unmarshal(new FileInputStream(new File(burpConfigPropertiesFileName)), BurpUnitConfig.class);
+                reportWriterConfigList = burpUnitConfig.getReportWriter();
+
+                System.out.println("Loading the following IssueReportWritabeles:");
+                issueReportWritableObjectList = new ArrayList<IssueReportWritable>();
+                for (ReportWriter reportWriterConfig : reportWriterConfigList) {
+                    System.out.println(reportWriterConfig.getFullQualifiedClassName());
+                    Class c = Class.forName(reportWriterConfig.getFullQualifiedClassName());
+                    issueReportWritableObjectList.add(((IssueReportWritable) c.newInstance()).initilizeIssueReportWriter(reportWriterConfig, resultsFileNameSibling));
+                }
+
+                urlsToScanFileName = burpUnitConfig.getGeneralSettings().getUrlListFilepath().getPath();
+
+                System.out.println("File Setup:\n---------------------------");
+                System.out.println("1. BURP CONFIG PROP FILE: \t" + burpConfigPropertiesFileName);
+                System.out.println("2. URLS TO SCAN FILE: \t" + urlsToScanFileName);
+                System.out.println("3. RESULT URL FILE: \t" + resultUrlsFileName);
+                System.out.println("4. RESULT BURP FILE: \t" + resultBurpFileName);
+                System.out.println("5. REPORT WRITABLES:");
+
+                for (IssueReportWritable issueReportWriterService : issueReportWritableObjectList) {
+                    System.out.println("- " + issueReportWriterService.getOutputFilePath());
+                }
+
                 urlsFromFileToScanReader = new BufferedReader(new FileReader(urlsToScanFileName));
                 outsession = new File(resultBurpFileName);
                 outurls = new BufferedWriter(new FileWriter(resultUrlsFileName));
 
-                System.out.println("File Setup:\n---------------------------");
-                System.out.println("1. URLS TO SCAN FILE: \t" + urlsToScanFileName);
-                System.out.println("2. RESULT BURP FILE: \t" + resultBurpFileName);
-                System.out.println("3. RESULT ISSUE FILE: \t" + resultIssuesFileName);
-                System.out.println("4. RESULT URL FILE: \t" + resultUrlsFileName);
-                System.out.println("5. RESULT XUNIT FILE: \t" + resultXUnitFileName);
-                System.out.println("6. BURP CONFIG PROP FILE: \t" + burpConfigPropertiesFileName);
-                System.out.println("7. CONFIG:" + burpUnitConfig.getGeneralSettings().getMaxScanQueueSize().getSize());
-
-                propMap = new HashMap();
-                propMap.put(BurpUnitProperties.URLS_TO_SCAN_FILE_NAME.toString(), urlsToScanFileName);
-                propMap.put(BurpUnitProperties.RESULT_BURP_FILE_NAME.toString(), resultBurpFileName);
-                propMap.put(BurpUnitProperties.RESULT_ISSUES_FILE_NAME.toString(), resultIssuesFileName);
-                propMap.put(BurpUnitProperties.RESULT_URLS_FILE_NAME.toString(), resultUrlsFileName);
-                propMap.put(BurpUnitProperties.RESULT_XUNIT_FILE_NAME.toString(), resultXUnitFileName);
-                propMap.put(BurpUnitProperties.BURP_CONFIG_PROPERTIES_FILE_NAME.toString(), burpConfigPropertiesFileName);
-
-                issueReportWriterServices = ServiceLoader.load(IssueReportWritable.class);
-                System.out.println("Loading the following IssueReportWritabeles:");
-                for (IssueReportWritable issueReportWriterService : issueReportWriterServices) {
-                    System.out.println(issueReportWriterService.getClass());
-                    issueReportWriterService.initilizeIssueReportWriter(propMap);
+                if (burpUnitConfig.getGeneralSettings().getScanQueueCheckInterval().getMilliseconds() != null) {
+                    SCAN_QUEUE_CHECK_INTERVALL = burpUnitConfig.getGeneralSettings().getScanQueueCheckInterval().getMilliseconds().intValue();
+                    System.out.println("SCAN_QUEUE_CHECK_INTERVALL: \t" + SCAN_QUEUE_CHECK_INTERVALL);
                 }
-                
-                //IssueReportWritable irw = IssueReportWritable.class.cast(Class.forName("com.burpunit.report.HTMLReportWriter"));
-                
+
+                if (burpUnitConfig.getGeneralSettings().getScanQueueCheckInterval().getMilliseconds() != null) {
+                    MAX_SCAN_QUEUE_SIZE = burpUnitConfig.getGeneralSettings().getMaxScanQueueSize().getSize().intValue();
+                    System.out.println("MAX_SCAN_QUEUE_SIZE: \t" + MAX_SCAN_QUEUE_SIZE);
+                }
+
             } catch (Exception ex) {
                 ex.printStackTrace();
                 printUsage();
@@ -164,24 +173,15 @@ public class BurpUnit {
         }
     }
 
-    private void loadBurpConfigPropertiesFromFile(final IBurpExtenderCallbacks mcallBacks, final String burpConfigPropertiesFileName) {
-        try {
-            configMapFileToRead = new BufferedReader(new FileReader(burpConfigPropertiesFileName));
-            String propSplitArray[];
-            configMap = new HashMap();
+    private void loadBurpConfigPropertiesFromFile(final IBurpExtenderCallbacks mcallBacks, final List<Property> propertyList) {
+        Map<String, String> configMap = new HashMap();
 
-            System.out.println("\nSetting the following properties:");
-            for (String propertyKeyValueString; (propertyKeyValueString = configMapFileToRead.readLine()) != null;) {
-                System.out.println("\n" + propertyKeyValueString);
-                propSplitArray = propertyKeyValueString.split("=");
-                if (propSplitArray.length == 2) {
-                    configMap.put(propSplitArray[0], propSplitArray[1]);
-                }
-            }
-            mcallBacks.loadConfig(configMap);
-        } catch (Exception ex) {
-            ex.printStackTrace();
+        System.out.println("\nSetting the following properties:");
+        for (Property prop : propertyList) {
+            System.out.println("\n" + prop.getName() + ":" + prop.getValue());
+            configMap.put(prop.getName(), prop.getValue());
         }
+        mcallBacks.loadConfig(configMap);
     }
 
     /**
@@ -194,8 +194,7 @@ public class BurpUnit {
     public void registerExtenderCallbacks(final IBurpExtenderCallbacks callbacks) {
         mcallBacks = callbacks;
 
-        loadBurpConfigPropertiesFromFile(mcallBacks, burpConfigPropertiesFileName);
-//        saveBurpConfigPropertiesToFile(mcallBacks, "config_map_final.txt");
+        loadBurpConfigPropertiesFromFile(mcallBacks, burpUnitConfig.getGeneralSettings().getBurpConfigOverwrites().getProperty());
 
         URL urlFromFile;
 
@@ -234,10 +233,12 @@ public class BurpUnit {
                 serviceIsHttps = "https".equals(messageInfo.getProtocol()) ? true : false;
                 outurls.write(messageInfo.getUrl().toString() + "\n");
 
-                isqi = mcallBacks.doActiveScan(messageInfo.getHost(), 80, serviceIsHttps, messageInfo.getRequest());
+                if (MAX_SCAN_QUEUE_SIZE > scanqueue.size()) {
+                    isqi = mcallBacks.doActiveScan(messageInfo.getHost(), 80, serviceIsHttps, messageInfo.getRequest());
 
-                synchronized (scanqueue) {
-                    scanqueue.add(isqi);
+                    synchronized (scanqueue) {
+                        scanqueue.add(isqi);
+                    }
                 }
 
                 if (!checkerStarted) {
@@ -298,7 +299,7 @@ public class BurpUnit {
     public void newScanIssue(IScanIssue issue) {
         try {
 
-            for (IssueReportWritable issueReportWriterService : issueReportWriterServices) {
+            for (IssueReportWritable issueReportWriterService : issueReportWritableObjectList) {
                 issueReportWriterService.addIssueToReport(issue);
             }
 
@@ -330,7 +331,7 @@ public class BurpUnit {
         try {
             outurls.close();
 
-            for (IssueReportWritable issueReportWriterService : issueReportWriterServices) {
+            for (IssueReportWritable issueReportWriterService : issueReportWritableObjectList) {
                 issueReportWriterService.closeReport();
             }
             System.out.println("Total time: " + (System.currentTimeMillis() - startMillis));

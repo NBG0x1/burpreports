@@ -5,12 +5,11 @@
 package com.burpunit.report;
 
 import burp.IScanIssue;
-import com.burpunit.BurpUnit;
+import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  *
@@ -19,11 +18,14 @@ import java.util.Map;
 public class HTMLReportWriter implements IssueReportWritable {
 
     private BufferedWriter outissues;
+    private String outputFilePath;
+    private static final String HTML_REPORT_FILE_POSTFIX = ".html";
+    private String issuePriorityToStartWriting;
 
     @Override
-    public void addIssueToReport(IScanIssue issue) {
+    public void addIssueToReport(final IScanIssue issue) {
         try {
-            if (!BurpUnit.IssuePriorities.Information.toString().equals(issue.getSeverity())) {
+            if (!issuePriorityToStartWriting.equals(issue.getSeverity())) {
                 outissues.write("<h1>" + issue.getIssueName() + "</h1>\r\n"
                         + "<table>\r\n"
                         + "<tr><td><b>Issue:</b></td><td>" + issue.getIssueName() + "</td></tr>\r\n"
@@ -46,18 +48,32 @@ public class HTMLReportWriter implements IssueReportWritable {
     @Override
     public void closeReport() {
         try {
-            outissues.close();
+            if(outissues != null) {
+                outissues.close();
+            } else {
+                System.out.append("Nothing to close.");
+            }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
     @Override
-    public void initilizeIssueReportWriter(Map<String, String> properties) {
+    public IssueReportWritable initilizeIssueReportWriter(final ReportWriter writerConfig, final String resultsFileNameSibling) {
         try {
-            outissues = new BufferedWriter(new FileWriter(new File(properties.get(BurpUnit.BurpUnitProperties.RESULT_ISSUES_FILE_NAME.toString())), false));
+            outputFilePath = writerConfig.getOutputFilepath().getPath()+resultsFileNameSibling+HTML_REPORT_FILE_POSTFIX;
+            issuePriorityToStartWriting = writerConfig.getIssuePriorityToStartWriting().getPrio();
+            
+            outissues = new BufferedWriter(new FileWriter(new File(outputFilePath), false));
         } catch (IOException ex) {
             ex.printStackTrace();
         }
+        
+        return this;
+    }
+
+    @Override
+    public String getOutputFilePath() {
+        return (outputFilePath != null)?outputFilePath:"";
     }
 }

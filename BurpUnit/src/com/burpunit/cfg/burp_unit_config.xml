@@ -2,7 +2,7 @@
 <burp_unit_config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="./xsd/burp_unit_config.xsd">
     <general_settings>
         <scan_queue_check_interval milliseconds="2000"/>
-        <max_scan_queue_size size="1"/>
+        <max_scan_queue_size size="3"/>
         <url_list_filepath path="urls_to_scan.txt"/>
         <burp_config_overwrites>
             <property name="scanner.autodeletefinisheditems">true</property>
@@ -12,8 +12,12 @@
             <property name="spider.maxlinkdepth">0</property>
         </burp_config_overwrites>
     </general_settings>
-    <report_writer full_qualified_class_name="test.a">
-        <output_filepath path=""/>
-        <start_writing_on_issue_priority prio="Medium"/>
+    <report_writer full_qualified_class_name="com.burpunit.report.HTMLReportWriter">
+        <output_filepath path="./"/>
+        <issue_priority_to_start_writing prio="High"/>
+    </report_writer>
+    <report_writer full_qualified_class_name="com.burpunit.report.XUnitReportWriter">
+        <output_filepath path="./"/>
+        <issue_priority_to_start_writing prio="High"/>
     </report_writer>
 </burp_unit_config>

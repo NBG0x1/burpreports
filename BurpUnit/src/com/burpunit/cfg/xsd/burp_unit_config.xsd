@@ -441,7 +441,7 @@ and open the template in the editor.
                                     <xs:attribute name="path" type="filepathType" use="required"/>
                                 </xs:complexType>
                             </xs:element>
-                            <xs:element name="start_writing_on_issue_priority">
+                            <xs:element name="issue_priority_to_start_writing">
                                 <xs:complexType>
                                     <xs:attribute name="prio" use="required">
                                         <xs:simpleType>
@@ -458,7 +458,7 @@ and open the template in the editor.
                         <xs:attribute name="full_qualified_class_name" use="required">
                             <xs:simpleType>
                                 <xs:restriction base="xs:string">
-                                    <xs:pattern value="([a-z_]{1}[a-z0-9_]*(\.[a-z_]{1}[a-z0-9_]*)*)"/>
+                                    <xs:pattern value="([a-z_]{1}[a-z0-9_]*(\.[a-zA-Z_]{1}[a-zA-Z0-9_]*)*)"/>
                                 </xs:restriction>
                             </xs:simpleType>
                         </xs:attribute>
