@@ -58,6 +58,7 @@ public class BurpUnit {
     private List<IssueReportWritable> issueReportWritableObjectList;
     private List<ReportWriter> reportWriterConfigList;
     private BurpUnitConfig burpUnitConfig;
+    private boolean maxScanQueueSizeExceeded;
 
     /**
      * Enum for Burp Suite Tools.
@@ -76,9 +77,31 @@ public class BurpUnit {
     /**
      * Enum for several issues prios.
      */
-    public static enum IssuePriorities {
+    public static enum IssuePriority {
 
-        Information, Medium, High;
+        INFORMATION("Information", 1),
+        MEDIUM("Medium", 2),
+        HIGH("High", 3);
+        private String issuePrioName;
+        private int issuePrioValue;
+
+        private IssuePriority(final String name, final int value) {
+            this.issuePrioName = name;
+            this.issuePrioValue = value;
+        }
+
+        public String getName() {
+            return this.issuePrioName;
+        }
+
+        public int getValue() {
+            return this.issuePrioValue;
+        }
+
+        @Override
+        public String toString() {
+            return "IssuePriority{" + "issuePrioName=" + issuePrioName + ", issuePrioValue=" + issuePrioValue + '}';
+        }
     }
 
     /**
@@ -228,22 +251,31 @@ public class BurpUnit {
      */
     public void processHttpMessage(final String toolName, final boolean messageIsRequest, final IHttpRequestResponse messageInfo) {
         try {
-            if (Tools.spider.toString().equals(toolName) && !messageIsRequest && mcallBacks.isInScope(messageInfo.getUrl())) {
+            if (Tools.spider.toString().equals(toolName)
+                    && !messageIsRequest
+                    && mcallBacks.isInScope(messageInfo.getUrl())) {
+                
+                if(scanqueue.size() >= MAX_SCAN_QUEUE_SIZE) {
+                    maxScanQueueSizeExceeded = true;
+                    System.out.println("Max queue size exceeded, blocking all following scan jobs");
+                }
+                
+                if (!maxScanQueueSizeExceeded) {
+                    serviceIsHttps = "https".equals(messageInfo.getProtocol()) ? true : false;
+                    outurls.write(messageInfo.getUrl().toString() + "\n");
 
-                serviceIsHttps = "https".equals(messageInfo.getProtocol()) ? true : false;
-                outurls.write(messageInfo.getUrl().toString() + "\n");
 
-                if (MAX_SCAN_QUEUE_SIZE > scanqueue.size()) {
                     isqi = mcallBacks.doActiveScan(messageInfo.getHost(), 80, serviceIsHttps, messageInfo.getRequest());
 
                     synchronized (scanqueue) {
                         scanqueue.add(isqi);
                     }
-                }
 
-                if (!checkerStarted) {
-                    checkerStarted = true;
-                    startScanQueueChecker(scanqueue);
+
+                    if (!checkerStarted) {
+                        checkerStarted = true;
+                        startScanQueueChecker(scanqueue);
+                    }
                 }
             }
         } catch (Exception ex) {
@@ -303,7 +335,7 @@ public class BurpUnit {
                 issueReportWriterService.addIssueToReport(issue);
             }
 
-            if (!IssuePriorities.Information.toString().equals(issue.getSeverity())) {
+            if (!IssuePriority.INFORMATION.getName().equals(issue.getSeverity())) {
                 System.out.println("scanner: " + issue.getSeverity() + " " + issue.getIssueName() + ": " + issue.getUrl());
 
                 (new Runnable() {

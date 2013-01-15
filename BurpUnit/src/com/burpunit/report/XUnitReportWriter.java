@@ -5,6 +5,7 @@
 package com.burpunit.report;
 
 import burp.IScanIssue;
+import com.burpunit.BurpUnit.IssuePriority;
 import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
 import com.burpunit.report.Testsuite.Properties;
 import com.burpunit.report.Testsuite.Properties.Property;
@@ -22,9 +23,8 @@ import javax.xml.datatype.DatatypeFactory;
  * @author runtz
  */
 public class XUnitReportWriter implements IssueReportWritable {
-    
-    private static final String XUNIT_REPORT_FILE_POSTFIX = ".xml";
 
+    private static final String XUNIT_REPORT_FILE_POSTFIX = ".xml";
     private ObjectFactory oFac;
     private Testsuite testSuite;
     private Failure testCaseFailure;
@@ -42,7 +42,8 @@ public class XUnitReportWriter implements IssueReportWritable {
     @Override
     public void addIssueToReport(final IScanIssue issue) {
         ++numIssues;
-        if (!issuePriorityToStartWriting.equals(issue.getSeverity())) {
+        if (IssuePriority.valueOf(issuePriorityToStartWriting.toUpperCase()).getValue()
+                <= IssuePriority.valueOf(issue.getSeverity().toUpperCase()).getValue()) {
             try {
                 ++numFailures;
 
@@ -102,30 +103,30 @@ public class XUnitReportWriter implements IssueReportWritable {
     }
 
     @Override
-    public IssueReportWritable initilizeIssueReportWriter(final ReportWriter writerConfig, final String resultsFileNameSibling) {       
+    public IssueReportWritable initilizeIssueReportWriter(final ReportWriter writerConfig, final String resultsFileNameSibling) {
         millisAtStart = System.currentTimeMillis();
 
-        outputFilePath = writerConfig.getOutputFilepath().getPath()+resultsFileNameSibling+XUNIT_REPORT_FILE_POSTFIX;
+        outputFilePath = writerConfig.getOutputFilepath().getPath() + resultsFileNameSibling + XUNIT_REPORT_FILE_POSTFIX;
         issuePriorityToStartWriting = writerConfig.getIssuePriorityToStartWriting().getPrio();
-        
+
         oFac = new ObjectFactory();
         testSuite = oFac.createTestsuite();
         suiteProperties = oFac.createTestsuiteProperties();
 
         testSuite.setProperties(suiteProperties);
-        
+
         deleteAndCreateFile(outputFilePath);
 
         Property curProp = oFac.createTestsuitePropertiesProperty();
         curProp.setName("IssuePriorityToStartWriting");
         curProp.setValue(issuePriorityToStartWriting);
         testSuite.getProperties().getProperty().add(curProp);
-        
+
         return this;
     }
 
     @Override
     public String getOutputFilePath() {
-        return (outputFilePath!=null)?outputFilePath:"";
+        return (outputFilePath != null) ? outputFilePath : "";
     }
 }

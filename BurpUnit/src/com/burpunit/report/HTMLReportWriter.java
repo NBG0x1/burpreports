@@ -5,6 +5,7 @@
 package com.burpunit.report;
 
 import burp.IScanIssue;
+import com.burpunit.BurpUnit;
 import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -25,7 +26,8 @@ public class HTMLReportWriter implements IssueReportWritable {
     @Override
     public void addIssueToReport(final IScanIssue issue) {
         try {
-            if (!issuePriorityToStartWriting.equals(issue.getSeverity())) {
+            if (BurpUnit.IssuePriority.valueOf(issuePriorityToStartWriting.toUpperCase()).getValue()
+                <= BurpUnit.IssuePriority.valueOf(issue.getSeverity().toUpperCase()).getValue()) {
                 outissues.write("<h1>" + issue.getIssueName() + "</h1>\r\n"
                         + "<table>\r\n"
                         + "<tr><td><b>Issue:</b></td><td>" + issue.getIssueName() + "</td></tr>\r\n"
