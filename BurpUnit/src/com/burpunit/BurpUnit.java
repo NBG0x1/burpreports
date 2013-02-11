@@ -27,7 +27,7 @@ import javax.xml.bind.JAXB;
 /**
  * ATTENTION: COMPILE WITH JDK6!!!
  *
- * SET THE CORRECT FOLDER OF THE BURP SUITE DISTRIBUTION IN BUILD:XML!
+ * SET THE CORRECT FOLDER OF THE BURP SUITE DISTRIBUTION IN BUILD.XML!
  *
  * BurpUnit uses the BurpExtender Interfaces for a headless usage of the spider
  * and scanner of Burp Suite. Several report writer could be registered to
@@ -39,13 +39,11 @@ import javax.xml.bind.JAXB;
 public class BurpUnit {
 
     private String urlsToScanFileName;
-    private String resultBurpFileName;
     private String resultUrlsFileName;
-    private static final String RESULT_BURP_FILE_POSTFIX = ".burp";
+    private String resultsFileNameSibling;
     private static final String RESULT_URLS_FILE_POSTFIX = ".urls";
     private int SCAN_QUEUE_CHECK_INTERVALL = 2000;
     private int MAX_SCAN_QUEUE_SIZE = 100;
-    private File outsession;
     private BufferedWriter outurls;
     private BufferedReader urlsFromFileToScanReader;
     private IBurpExtenderCallbacks mcallBacks;
@@ -67,41 +65,6 @@ public class BurpUnit {
     private enum Tools {
 
         spider, scanner;
-    }
-
-    public static enum BurpUnitProperties {
-
-        URLS_TO_SCAN_FILE_NAME, RESULT_BURP_FILE_NAME, RESULT_ISSUES_FILE_NAME, RESULT_URLS_FILE_NAME, RESULT_XUNIT_FILE_NAME, BURP_CONFIG_PROPERTIES_FILE_NAME;
-    }
-
-    /**
-     * Enum for several issues prios.
-     */
-    public static enum IssuePriority {
-
-        INFORMATION("Information", 1),
-        MEDIUM("Medium", 2),
-        HIGH("High", 3);
-        private String issuePrioName;
-        private int issuePrioValue;
-
-        private IssuePriority(final String name, final int value) {
-            this.issuePrioName = name;
-            this.issuePrioValue = value;
-        }
-
-        public String getName() {
-            return this.issuePrioName;
-        }
-
-        public int getValue() {
-            return this.issuePrioValue;
-        }
-
-        @Override
-        public String toString() {
-            return "IssuePriority{" + "issuePrioName=" + issuePrioName + ", issuePrioValue=" + issuePrioValue + '}';
-        }
     }
 
     /**
@@ -130,8 +93,6 @@ public class BurpUnit {
      */
     public void setCommandLineArgs(String[] args) {
         if (args.length > 0 && args.length < 3) {
-            String resultsFileNameSibling = "";
-
             if (args.length > 0) {
                 resultsFileNameSibling = args[0];
             }
@@ -142,7 +103,7 @@ public class BurpUnit {
                 burpConfigPropertiesFileName = "burp_unit_config.xml";
             }
 
-            resultBurpFileName = resultsFileNameSibling + RESULT_BURP_FILE_POSTFIX;
+
             resultUrlsFileName = resultsFileNameSibling + RESULT_URLS_FILE_POSTFIX;
 
             try {
@@ -150,29 +111,15 @@ public class BurpUnit {
                 burpUnitConfig = JAXB.unmarshal(new FileInputStream(new File(burpConfigPropertiesFileName)), BurpUnitConfig.class);
                 reportWriterConfigList = burpUnitConfig.getReportWriter();
 
-                System.out.println("Loading the following IssueReportWritabeles:");
-                issueReportWritableObjectList = new ArrayList<IssueReportWritable>();
-                for (ReportWriter reportWriterConfig : reportWriterConfigList) {
-                    System.out.println(reportWriterConfig.getFullQualifiedClassName());
-                    Class c = Class.forName(reportWriterConfig.getFullQualifiedClassName());
-                    issueReportWritableObjectList.add(((IssueReportWritable) c.newInstance()).initilizeIssueReportWriter(reportWriterConfig, resultsFileNameSibling));
-                }
-
                 urlsToScanFileName = burpUnitConfig.getGeneralSettings().getUrlListFilepath().getPath();
 
                 System.out.println("File Setup:\n---------------------------");
                 System.out.println("1. BURP CONFIG PROP FILE: \t" + burpConfigPropertiesFileName);
                 System.out.println("2. URLS TO SCAN FILE: \t" + urlsToScanFileName);
                 System.out.println("3. RESULT URL FILE: \t" + resultUrlsFileName);
-                System.out.println("4. RESULT BURP FILE: \t" + resultBurpFileName);
-                System.out.println("5. REPORT WRITABLES:");
-
-                for (IssueReportWritable issueReportWriterService : issueReportWritableObjectList) {
-                    System.out.println("- " + issueReportWriterService.getOutputFilePath());
-                }
 
                 urlsFromFileToScanReader = new BufferedReader(new FileReader(urlsToScanFileName));
-                outsession = new File(resultBurpFileName);
+
                 outurls = new BufferedWriter(new FileWriter(resultUrlsFileName));
 
                 if (burpUnitConfig.getGeneralSettings().getScanQueueCheckInterval().getMilliseconds() != null) {
@@ -196,7 +143,44 @@ public class BurpUnit {
         }
     }
 
-    private void loadBurpConfigPropertiesFromFile(final IBurpExtenderCallbacks mcallBacks, final List<Property> propertyList) {
+    /**
+     * Delegate method from BurpExtender. Is called for one time. Provides a
+     * callback reference. On the callback the scope gets defined from the
+     * loaded url list and the spider is called, both per each url list entry.
+     *
+     * @param callbacks
+     */
+    public void registerExtenderCallbacks(final IBurpExtenderCallbacks callbacks) {
+        mcallBacks = callbacks;
+
+        try {
+            System.out.println("Loading the following IssueReportWritabeles:");
+            issueReportWritableObjectList = new ArrayList<IssueReportWritable>();
+            IssueReportWritable reportWritable;
+            for (ReportWriter reportWriterConfig : reportWriterConfigList) {
+                System.out.println("- " + reportWriterConfig.getFullQualifiedClassName());
+                Class c = Class.forName(reportWriterConfig.getFullQualifiedClassName());
+                reportWritable = ((IssueReportWritable) c.newInstance()).initilizeIssueReportWriter(mcallBacks, reportWriterConfig, resultsFileNameSibling);
+                issueReportWritableObjectList.add(reportWritable);
+                System.out.println("- " + reportWritable.getOutputFilePath());
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            mcallBacks.exitSuite(false);
+        }
+        
+        overwriteBurpSuiteProperties(mcallBacks, burpUnitConfig.getGeneralSettings().getBurpConfigOverwrites().getProperty());
+        startSpidering(urlsFromFileToScanReader);
+
+    }
+
+    /**
+     * Overwrites the BurpSuite properties by the given property list.
+     * 
+     * @param mcallBacks
+     * @param propertyList 
+     */
+    private void overwriteBurpSuiteProperties(final IBurpExtenderCallbacks mcallBacks, final List<Property> propertyList) {
         Map<String, String> configMap = new HashMap();
 
         System.out.println("\nSetting the following properties:");
@@ -208,22 +192,14 @@ public class BurpUnit {
     }
 
     /**
-     * Delegate method from BurpExtender. Is called for one time. Provides a
-     * callback reference. On the callback the scope gets defined from the
-     * loaded url list and the spider is called, both per each url list entry.
-     *
-     * @param callbacks
-     */
-    public void registerExtenderCallbacks(final IBurpExtenderCallbacks callbacks) {
-        mcallBacks = callbacks;
-
-        loadBurpConfigPropertiesFromFile(mcallBacks, burpUnitConfig.getGeneralSettings().getBurpConfigOverwrites().getProperty());
-
+     * Starts the spider 
+     */   
+    private void startSpidering(BufferedReader urlsToScanReader) {
         URL urlFromFile;
 
         try {
             System.out.println("\nStarting the spider");
-            for (String urlStringFromFile; (urlStringFromFile = urlsFromFileToScanReader.readLine()) != null;) {
+            for (String urlStringFromFile; (urlStringFromFile = urlsToScanReader.readLine()) != null;) {
                 System.out.print(urlStringFromFile);
                 urlFromFile = new URL(urlStringFromFile);
                 mcallBacks.includeInScope(urlFromFile);
@@ -234,7 +210,6 @@ public class BurpUnit {
             ex.printStackTrace();
             mcallBacks.exitSuite(false);
         }
-
     }
 
     /**
@@ -254,23 +229,20 @@ public class BurpUnit {
             if (Tools.spider.toString().equals(toolName)
                     && !messageIsRequest
                     && mcallBacks.isInScope(messageInfo.getUrl())) {
-                
-                if(scanqueue.size() >= MAX_SCAN_QUEUE_SIZE) {
+
+                if (scanqueue.size() >= MAX_SCAN_QUEUE_SIZE) {
                     maxScanQueueSizeExceeded = true;
                     System.out.println("Max queue size exceeded, blocking all following scan jobs");
                 }
-                
+
                 if (!maxScanQueueSizeExceeded) {
                     serviceIsHttps = "https".equals(messageInfo.getProtocol()) ? true : false;
                     outurls.write(messageInfo.getUrl().toString() + "\n");
-
-
                     isqi = mcallBacks.doActiveScan(messageInfo.getHost(), 80, serviceIsHttps, messageInfo.getRequest());
 
                     synchronized (scanqueue) {
                         scanqueue.add(isqi);
                     }
-
 
                     if (!checkerStarted) {
                         checkerStarted = true;
@@ -330,25 +302,8 @@ public class BurpUnit {
      */
     public void newScanIssue(IScanIssue issue) {
         try {
-
             for (IssueReportWritable issueReportWriterService : issueReportWritableObjectList) {
                 issueReportWriterService.addIssueToReport(issue);
-            }
-
-            if (!IssuePriority.INFORMATION.getName().equals(issue.getSeverity())) {
-                System.out.println("scanner: " + issue.getSeverity() + " " + issue.getIssueName() + ": " + issue.getUrl());
-
-                (new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            mcallBacks.saveState(outsession);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-                    }
-                }).run();
-
             }
         } catch (Exception e) {
             e.printStackTrace();

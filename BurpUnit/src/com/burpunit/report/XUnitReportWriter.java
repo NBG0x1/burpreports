@@ -4,8 +4,8 @@
  */
 package com.burpunit.report;
 
+import burp.IBurpExtenderCallbacks;
 import burp.IScanIssue;
-import com.burpunit.BurpUnit.IssuePriority;
 import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
 import com.burpunit.report.Testsuite.Properties;
 import com.burpunit.report.Testsuite.Properties.Property;
@@ -103,7 +103,7 @@ public class XUnitReportWriter implements IssueReportWritable {
     }
 
     @Override
-    public IssueReportWritable initilizeIssueReportWriter(final ReportWriter writerConfig, final String resultsFileNameSibling) {
+    public IssueReportWritable initilizeIssueReportWriter(final IBurpExtenderCallbacks callback, final ReportWriter writerConfig, final String resultsFileNameSibling) {
         millisAtStart = System.currentTimeMillis();
 
         outputFilePath = writerConfig.getOutputFilepath().getPath() + resultsFileNameSibling + XUNIT_REPORT_FILE_POSTFIX;

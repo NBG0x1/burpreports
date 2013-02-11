@@ -447,6 +447,7 @@ and open the template in the editor.
                                         <xs:simpleType>
                                             <xs:restriction base="xs:string">
                                                 <xs:enumeration value="Information"/>
+                                                <xs:enumeration value="Low"/>
                                                 <xs:enumeration value="Medium"/>
                                                 <xs:enumeration value="High"/>
                                             </xs:restriction>

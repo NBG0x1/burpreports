@@ -20,4 +20,8 @@
         <output_filepath path="./"/>
         <issue_priority_to_start_writing prio="High"/>
     </report_writer>
+    <report_writer full_qualified_class_name="com.burpunit.report.BurpReportWriter">
+        <output_filepath path="./"/>
+        <issue_priority_to_start_writing prio="High"/>
+    </report_writer>
 </burp_unit_config>

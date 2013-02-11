@@ -4,6 +4,7 @@
  */
 package com.burpunit.report;
 
+import burp.IBurpExtenderCallbacks;
 import burp.IScanIssue;
 import com.burpunit.BurpUnit;
 import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
@@ -26,8 +27,8 @@ public class HTMLReportWriter implements IssueReportWritable {
     @Override
     public void addIssueToReport(final IScanIssue issue) {
         try {
-            if (BurpUnit.IssuePriority.valueOf(issuePriorityToStartWriting.toUpperCase()).getValue()
-                <= BurpUnit.IssuePriority.valueOf(issue.getSeverity().toUpperCase()).getValue()) {
+            if (IssuePriority.valueOf(issuePriorityToStartWriting.toUpperCase()).getValue()
+                <= IssuePriority.valueOf(issue.getSeverity().toUpperCase()).getValue()) {
                 outissues.write("<h1>" + issue.getIssueName() + "</h1>\r\n"
                         + "<table>\r\n"
                         + "<tr><td><b>Issue:</b></td><td>" + issue.getIssueName() + "</td></tr>\r\n"
@@ -61,7 +62,7 @@ public class HTMLReportWriter implements IssueReportWritable {
     }
 
     @Override
-    public IssueReportWritable initilizeIssueReportWriter(final ReportWriter writerConfig, final String resultsFileNameSibling) {
+    public IssueReportWritable initilizeIssueReportWriter(final IBurpExtenderCallbacks callback, final ReportWriter writerConfig, final String resultsFileNameSibling) {
         try {
             outputFilePath = writerConfig.getOutputFilepath().getPath()+resultsFileNameSibling+HTML_REPORT_FILE_POSTFIX;
             issuePriorityToStartWriting = writerConfig.getIssuePriorityToStartWriting().getPrio();

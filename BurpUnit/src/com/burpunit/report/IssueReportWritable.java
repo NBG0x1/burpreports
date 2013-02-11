@@ -4,6 +4,7 @@
  */
 package com.burpunit.report;
 
+import burp.IBurpExtenderCallbacks;
 import burp.IScanIssue;
 import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
 
@@ -13,7 +14,7 @@ import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
  */
 public interface IssueReportWritable {
     
-    public IssueReportWritable initilizeIssueReportWriter(final ReportWriter writerConfig, final String resultsFileNameSibling);
+    public IssueReportWritable initilizeIssueReportWriter(final IBurpExtenderCallbacks callback, final ReportWriter writerConfig, final String resultsFileNameSibling);
     
     public void addIssueToReport(final IScanIssue issue);
     
