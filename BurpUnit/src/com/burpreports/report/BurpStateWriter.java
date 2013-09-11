@@ -2,19 +2,18 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.burpunit.report;
+package com.burpreports.report;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IScanIssue;
-import com.burpunit.BurpUnit;
-import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
+import com.burpreports.cfg.BurpReportsConfig.ReportWriter;
 import java.io.File;
 
 /**
  *
  * @author runtz
  */
-public class BurpReportWriter implements IssueReportWritable {
+public class BurpStateWriter implements IssueReportWritable {
 
     private static final String RESULT_BURP_FILE_POSTFIX = ".burp";
     private String resultBurpFileName;
@@ -25,7 +24,7 @@ public class BurpReportWriter implements IssueReportWritable {
     @Override
     public IssueReportWritable initilizeIssueReportWriter(IBurpExtenderCallbacks callback, ReportWriter writerConfig, String resultsFileNameSibling) {
         mcallBacks = callback;
-        resultBurpFileName = resultsFileNameSibling + RESULT_BURP_FILE_POSTFIX;
+        resultBurpFileName = writerConfig.getOutputFilepath().getPath() + resultsFileNameSibling + RESULT_BURP_FILE_POSTFIX;
         outsession = new File(resultBurpFileName);
         issuePriorityToStartWriting = writerConfig.getIssuePriorityToStartWriting().getPrio();
         return this;

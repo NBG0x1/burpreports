@@ -12,7 +12,7 @@ and open the template in the editor.
             <!--xs:pattern value="([a-zA-Z0-9_-]+\.)+"/-->
         </xs:restriction>
     </xs:simpleType>
-    <xs:element name="burp_unit_config">
+    <xs:element name="burp_reports_config">
         <xs:complexType>
             <xs:sequence>
                 <xs:element name="general_settings" minOccurs="1" maxOccurs="1">

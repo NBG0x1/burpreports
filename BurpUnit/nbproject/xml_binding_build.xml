@@ -11,33 +11,33 @@
     <target name="jaxb-code-generation" depends="xjc-typedef-target,-do-init,-init-macrodef-javac">
         <mkdir dir="${build.generated.sources.dir}/jaxb" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
         <mkdir dir="build/generated/jaxbCache" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
-        <mkdir dir="build/generated/jaxbCache/burp_unit_config"/>
-        <xjc package="com.burpunit.cfg" destdir="build/generated/jaxbCache/burp_unit_config" catalog="catalog.xml">
+        <mkdir dir="build/generated/jaxbCache/BurpReportsConfig"/>
+        <xjc package="com.burpreports.cfg" destdir="build/generated/jaxbCache/BurpReportsConfig" catalog="catalog.xml">
             <classpath>
                 <pathelement location="${src.dir}"/>
                 <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
             </classpath>
             <arg value="-xmlschema"/>
-            <schema file="xml-resources/jaxb/burp_unit_config/burp_unit_config.xsd"/>
-            <depends file="xml-resources/jaxb/burp_unit_config/burp_unit_config.xsd"/>
-            <produces dir="build/generated/jaxbCache/burp_unit_config"/>
+            <schema file="xml-resources/jaxb/BurpReportsConfig/burp_unit_config.xsd"/>
+            <depends file="xml-resources/jaxb/BurpReportsConfig/burp_unit_config.xsd"/>
+            <produces dir="build/generated/jaxbCache/BurpReportsConfig"/>
         </xjc>
         <copy todir="${build.generated.sources.dir}/jaxb">
-            <fileset dir="build/generated/jaxbCache/burp_unit_config"/>
+            <fileset dir="build/generated/jaxbCache/BurpReportsConfig"/>
         </copy>
-        <mkdir dir="build/generated/jaxbCache/x_unit"/>
-        <xjc package="com.burpunit.report" destdir="build/generated/jaxbCache/x_unit" catalog="catalog.xml">
+        <mkdir dir="build/generated/jaxbCache/BurpReportsReportXUnit"/>
+        <xjc package="com.burpreports.report" destdir="build/generated/jaxbCache/BurpReportsReportXUnit" catalog="catalog.xml">
             <classpath>
                 <pathelement location="${src.dir}"/>
                 <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
             </classpath>
             <arg value="-xmlschema"/>
-            <schema file="xml-resources/jaxb/x_unit/x_unit.xsd"/>
-            <depends file="xml-resources/jaxb/x_unit/x_unit.xsd"/>
-            <produces dir="build/generated/jaxbCache/x_unit"/>
+            <schema file="xml-resources/jaxb/BurpReportsReportXUnit/x_unit.xsd"/>
+            <depends file="xml-resources/jaxb/BurpReportsReportXUnit/x_unit.xsd"/>
+            <produces dir="build/generated/jaxbCache/BurpReportsReportXUnit"/>
         </xjc>
         <copy todir="${build.generated.sources.dir}/jaxb">
-            <fileset dir="build/generated/jaxbCache/x_unit"/>
+            <fileset dir="build/generated/jaxbCache/BurpReportsReportXUnit"/>
         </copy>
     </target>
 </project>

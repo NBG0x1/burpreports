@@ -4,6 +4,7 @@
  */
 package com.burpunit;
 
+import com.burpreports.BurpReports;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IScanIssue;
@@ -46,7 +47,7 @@ public class BurpUnitTest {
     public void testSetCommandLineArgs() {
         System.out.println("setCommandLineArgs");
         String[] args = null;
-        BurpUnit instance = new BurpUnit();
+        BurpReports instance = new BurpReports();
         instance.setCommandLineArgs(args);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -59,7 +60,7 @@ public class BurpUnitTest {
     public void testRegisterExtenderCallbacks() {
         System.out.println("registerExtenderCallbacks");
         IBurpExtenderCallbacks callbacks = null;
-        BurpUnit instance = new BurpUnit();
+        BurpReports instance = new BurpReports();
         instance.registerExtenderCallbacks(callbacks);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -74,7 +75,7 @@ public class BurpUnitTest {
         String toolName = "";
         boolean messageIsRequest = false;
         IHttpRequestResponse messageInfo = null;
-        BurpUnit instance = new BurpUnit();
+        BurpReports instance = new BurpReports();
         instance.processHttpMessage(toolName, messageIsRequest, messageInfo);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -87,7 +88,7 @@ public class BurpUnitTest {
     public void testNewScanIssue() {
         System.out.println("newScanIssue");
         IScanIssue issue = null;
-        BurpUnit instance = new BurpUnit();
+        BurpReports instance = new BurpReports();
         instance.newScanIssue(issue);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -99,7 +100,7 @@ public class BurpUnitTest {
     @Test
     public void testApplicationClosing() {
         System.out.println("applicationClosing");
-        BurpUnit instance = new BurpUnit();
+        BurpReports instance = new BurpReports();
         instance.applicationClosing();
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

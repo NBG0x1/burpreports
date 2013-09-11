@@ -2,11 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.burpunit.report;
+package com.burpreports.report;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IScanIssue;
-import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
+import com.burpreports.cfg.BurpReportsConfig.ReportWriter;
 
 /**
  *

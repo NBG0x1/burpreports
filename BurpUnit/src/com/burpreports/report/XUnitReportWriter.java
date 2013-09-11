@@ -2,15 +2,17 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.burpunit.report;
+package com.burpreports.report;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IScanIssue;
-import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
-import com.burpunit.report.Testsuite.Properties;
-import com.burpunit.report.Testsuite.Properties.Property;
-import com.burpunit.report.Testsuite.Testcase;
-import com.burpunit.report.Testsuite.Testcase.Failure;
+import com.burpreports.cfg.BurpReportsConfig.ReportWriter;
+import com.burpreports.report.ObjectFactory;
+import com.burpreports.report.Testsuite;
+import com.burpreports.report.Testsuite.Properties;
+import com.burpreports.report.Testsuite.Properties.Property;
+import com.burpreports.report.Testsuite.Testcase;
+import com.burpreports.report.Testsuite.Testcase.Failure;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.math.BigDecimal;

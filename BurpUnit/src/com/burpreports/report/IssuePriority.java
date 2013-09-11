@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.burpunit.report;
+package com.burpreports.report;
 
 /**
  * Enum for several issues prios.

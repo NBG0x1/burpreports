@@ -2,12 +2,11 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.burpunit.report;
+package com.burpreports.report;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IScanIssue;
-import com.burpunit.BurpUnit;
-import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
+import com.burpreports.cfg.BurpReportsConfig.ReportWriter;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -64,7 +63,7 @@ public class HTMLReportWriter implements IssueReportWritable {
     @Override
     public IssueReportWritable initilizeIssueReportWriter(final IBurpExtenderCallbacks callback, final ReportWriter writerConfig, final String resultsFileNameSibling) {
         try {
-            outputFilePath = writerConfig.getOutputFilepath().getPath()+resultsFileNameSibling+HTML_REPORT_FILE_POSTFIX;
+            outputFilePath = writerConfig.getOutputFilepath().getPath() + resultsFileNameSibling + HTML_REPORT_FILE_POSTFIX;
             issuePriorityToStartWriting = writerConfig.getIssuePriorityToStartWriting().getPrio();
             
             outissues = new BufferedWriter(new FileWriter(new File(outputFilePath), false));

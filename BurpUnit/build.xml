@@ -7,17 +7,17 @@
 <!-- the Compile on Save feature is turned off for the project. -->
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
-<project name="BurpUnit" default="default" basedir=".">
-    <description>Builds, tests, and runs the project BurpUnit.</description>
+<project name="BurpReports" default="default" basedir=".">
+    <description>Builds, tests, and runs the project BurpReports</description>
     <import file="nbproject/build-impl.xml"/>
     <property name="burp.suite.dir" value="C:\_tino\sandbox\burp\"/>
-    <property name="burpunit.config.xml" value="src/com/burpunit/cfg/burp_unit_config.xml"/>
+    <property name="burpreports.config.xml" value="src/com/burpreports/cfg/burp_reports_config.xml"/>
     <target name="-post-jar">
         <echo message="Deploying the jar: ${dist.jar.resolved} to the Burp Suite directory: ${burp.suite.dir}."/>
         <copy file="${dist.jar.resolved}" todir="${burp.suite.dir}"/>
         
-        <echo message="Deploying the config xml: ${burpunit.config.xml} to the Burp Suite directory: ${burp.suite.dir}."/>
-        <copy file="${burpunit.config.xml}" todir="${burp.suite.dir}"/>
+        <echo message="Deploying the config xml: ${burpreports.config.xml} to the Burp Suite directory: ${burp.suite.dir}."/>
+        <copy file="${burpreports.config.xml}" todir="${burp.suite.dir}"/>
     </target>
     <!--
 

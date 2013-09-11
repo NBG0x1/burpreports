@@ -1,13 +1,13 @@
-package com.burpunit;
+package com.burpreports;
 
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IScanIssue;
 import burp.IScanQueueItem;
-import com.burpunit.cfg.BurpUnitConfig;
-import com.burpunit.cfg.BurpUnitConfig.GeneralSettings.BurpConfigOverwrites.Property;
-import com.burpunit.cfg.BurpUnitConfig.ReportWriter;
-import com.burpunit.report.IssueReportWritable;
+import com.burpreports.cfg.BurpReportsConfig;
+import com.burpreports.cfg.BurpReportsConfig.GeneralSettings.BurpConfigOverwrites.Property;
+import com.burpreports.cfg.BurpReportsConfig.ReportWriter;
+import com.burpreports.report.IssueReportWritable;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -29,14 +29,14 @@ import javax.xml.bind.JAXB;
  *
  * SET THE CORRECT FOLDER OF THE BURP SUITE DISTRIBUTION IN BUILD.XML!
  *
- * BurpUnit uses the BurpExtender Interfaces for a headless usage of the spider
+ * BurpReports uses the BurpExtender Interfaces for a headless usage of the spider
  * and scanner of Burp Suite. Several report writer could be registered to
  * generate reports. The XUnitReportWriter report can be used for an Continuous
  * Integrations systems to monitor the results.
  *
  * @author runtz
  */
-public class BurpUnit {
+public class BurpReports {
 
     private String urlsToScanFileName;
     private String resultUrlsFileName;
@@ -53,9 +53,9 @@ public class BurpUnit {
     private boolean checkerStarted = false;
     long startMillis;
     private String burpConfigPropertiesFileName;
-    private List<IssueReportWritable> issueReportWritableObjectList;
+    private List<IssueReportWritable> issueReportWritableObjectsList;
     private List<ReportWriter> reportWriterConfigList;
-    private BurpUnitConfig burpUnitConfig;
+    private BurpReportsConfig burpUnitConfig;
     private boolean maxScanQueueSizeExceeded;
 
     /**
@@ -77,7 +77,7 @@ public class BurpUnit {
     /**
      * Constructor just writes some information on the console.
      */
-    public BurpUnit() {
+    public BurpReports() {
         startMillis = System.currentTimeMillis();
         System.out.println("##########################################");
         System.out.println("# Starting the headless spider & scanner #".toUpperCase());
@@ -108,7 +108,7 @@ public class BurpUnit {
 
             try {
 
-                burpUnitConfig = JAXB.unmarshal(new FileInputStream(new File(burpConfigPropertiesFileName)), BurpUnitConfig.class);
+                burpUnitConfig = JAXB.unmarshal(new FileInputStream(new File(burpConfigPropertiesFileName)), BurpReportsConfig.class);
                 reportWriterConfigList = burpUnitConfig.getReportWriter();
 
                 urlsToScanFileName = burpUnitConfig.getGeneralSettings().getUrlListFilepath().getPath();
@@ -127,7 +127,7 @@ public class BurpUnit {
                     System.out.println("SCAN_QUEUE_CHECK_INTERVALL: \t" + SCAN_QUEUE_CHECK_INTERVALL);
                 }
 
-                if (burpUnitConfig.getGeneralSettings().getScanQueueCheckInterval().getMilliseconds() != null) {
+                if (burpUnitConfig.getGeneralSettings().getMaxScanQueueSize().getSize() != null) {
                     MAX_SCAN_QUEUE_SIZE = burpUnitConfig.getGeneralSettings().getMaxScanQueueSize().getSize().intValue();
                     System.out.println("MAX_SCAN_QUEUE_SIZE: \t" + MAX_SCAN_QUEUE_SIZE);
                 }
@@ -155,13 +155,13 @@ public class BurpUnit {
 
         try {
             System.out.println("Loading the following IssueReportWritabeles:");
-            issueReportWritableObjectList = new ArrayList<IssueReportWritable>();
+            issueReportWritableObjectsList = new ArrayList<IssueReportWritable>();
             IssueReportWritable reportWritable;
             for (ReportWriter reportWriterConfig : reportWriterConfigList) {
                 System.out.println("- " + reportWriterConfig.getFullQualifiedClassName());
                 Class c = Class.forName(reportWriterConfig.getFullQualifiedClassName());
                 reportWritable = ((IssueReportWritable) c.newInstance()).initilizeIssueReportWriter(mcallBacks, reportWriterConfig, resultsFileNameSibling);
-                issueReportWritableObjectList.add(reportWritable);
+                issueReportWritableObjectsList.add(reportWritable);
                 System.out.println("- " + reportWritable.getOutputFilePath());
             }
         } catch (Exception ex) {
@@ -302,7 +302,7 @@ public class BurpUnit {
      */
     public void newScanIssue(IScanIssue issue) {
         try {
-            for (IssueReportWritable issueReportWriterService : issueReportWritableObjectList) {
+            for (IssueReportWritable issueReportWriterService : issueReportWritableObjectsList) {
                 issueReportWriterService.addIssueToReport(issue);
             }
         } catch (Exception e) {
@@ -318,7 +318,7 @@ public class BurpUnit {
         try {
             outurls.close();
 
-            for (IssueReportWritable issueReportWriterService : issueReportWritableObjectList) {
+            for (IssueReportWritable issueReportWriterService : issueReportWritableObjectsList) {
                 issueReportWriterService.closeReport();
             }
             System.out.println("Total time: " + (System.currentTimeMillis() - startMillis));

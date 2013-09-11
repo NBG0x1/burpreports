@@ -2,7 +2,7 @@ import burp.IBurpExtender;
 import burp.IBurpExtenderCallbacks;
 import burp.IHttpRequestResponse;
 import burp.IScanIssue;
-import com.burpunit.BurpUnit;
+import com.burpreports.BurpReports;
 
 /*
  * BurpExtender delegate
@@ -13,7 +13,7 @@ import com.burpunit.BurpUnit;
  */
 public class BurpExtender implements IBurpExtender {
 
-    private BurpUnit burpUnit = new BurpUnit();
+    private BurpReports burpUnit = new BurpReports();
 
     @Override
     public void setCommandLineArgs(String[] args) {
