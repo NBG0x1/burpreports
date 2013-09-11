@@ -1,0 +1,471 @@
+<?xml version="1.0"?>
+<!--
+To change this template, choose Tools | Templates
+and open the template in the editor.
+-->
+
+<xs:schema version="1.0"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
+    <xs:simpleType name="filepathType">
+        <xs:restriction base="xs:string">
+            <!--xs:pattern value="([a-zA-Z0-9_-]+\.)+"/-->
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element name="burp_reports_config">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="general_settings" minOccurs="1" maxOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="scan_queue_check_interval" minOccurs="0" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:attribute name="milliseconds" type="xs:positiveInteger" use="required">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en">Miliseconds to repeat the queue size checks.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="max_scan_queue_size" minOccurs="0" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:attribute name="size" type="xs:positiveInteger" use="required">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en">Max size of the urls to add to the scan queue</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>  
+                            <xs:element name="url_list_filepath" minOccurs="0" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:attribute name="path" type="filepathType" use="required">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en">File path of the url list file with urls to scan</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="burp_config_overwrites" minOccurs="0" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="property" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:simpleContent>
+                                                    <xs:extension base="xs:string">
+                                                        <xs:attribute name="name">
+                                                            <xs:simpleType>
+                                                                <xs:restriction base="xs:string">
+                                                                    <xs:enumeration value="comparer.ComparerUpdateCookieJar"/>
+                                                                    <xs:enumeration value="decoder.DecoderUpdateCookieJar"/>
+                                                                    <xs:enumeration value="intruder.attacktype"/>
+                                                                    <xs:enumeration value="intruder.autoplacementappend"/>
+                                                                    <xs:enumeration value="intruder.dosmode"/>
+                                                                    <xs:enumeration value="intruder.extractgrep.dogrep"/>
+                                                                    <xs:enumeration value="intruder.extractgrep.ext0"/>
+                                                                    <xs:enumeration value="intruder.extractgrep.maxlen"/>
+                                                                    <xs:enumeration value="intruder.fixedthrottleval"/>
+                                                                    <xs:enumeration value="intruder.followredirects"/>
+                                                                    <xs:enumeration value="intruder.host"/>
+                                                                    <xs:enumeration value="intruder.IntruderUpdateCookieJar"/>
+                                                                    <xs:enumeration value="intruder.makebaselinerequest"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.casesensitive"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.dogrep"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.excludeheaders"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item0"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item1"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item10"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item11"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item12"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item13"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item14"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item15"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item16"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item17"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item18"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item19"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item2"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item3"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item4"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item5"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item6"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item7"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item8"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.item9"/>
+                                                                    <xs:enumeration value="intruder.matchgrep.simplepattern"/>
+                                                                    <xs:enumeration value="intruder.newtabbehavior"/>
+                                                                    <xs:enumeration value="intruder.numattackthreads"/>
+                                                                    <xs:enumeration value="intruder.numretries"/>
+                                                                    <xs:enumeration value="intruder.pausebeforeretry"/>
+                                                                    <xs:enumeration value="intruder.payloadgrep.casesensitive"/>
+                                                                    <xs:enumeration value="intruder.payloadgrep.dogrep"/>
+                                                                    <xs:enumeration value="intruder.payloadgrep.excludeheaders"/>
+                                                                    <xs:enumeration value="intruder.payloadgrep.matchpreencoded"/>
+                                                                    <xs:enumeration value="intruder.payloadpositions64"/>
+                                                                    <xs:enumeration value="intruder.payloadprocessor.dourlencode"/>
+                                                                    <xs:enumeration value="intruder.payloadprocessor.rule0"/>
+                                                                    <xs:enumeration value="intruder.payloadprocessor.urlencodechars"/>
+                                                                    <xs:enumeration value="intruder.payloadsdir"/>
+                                                                    <xs:enumeration value="intruder.port"/>
+                                                                    <xs:enumeration value="intruder.processcookiesinredirects"/>
+                                                                    <xs:enumeration value="intruder.setconnectionclose"/>
+                                                                    <xs:enumeration value="intruder.ssl"/>
+                                                                    <xs:enumeration value="intruder.startdelay"/>
+                                                                    <xs:enumeration value="intruder.startwhen"/>
+                                                                    <xs:enumeration value="intruder.storepayloads"/>
+                                                                    <xs:enumeration value="intruder.storerequests"/>
+                                                                    <xs:enumeration value="intruder.storeresponses"/>
+                                                                    <xs:enumeration value="intruder.throttlefixed"/>
+                                                                    <xs:enumeration value="intruder.updateCLheader"/>
+                                                                    <xs:enumeration value="intruder.varthrottlestart"/>
+                                                                    <xs:enumeration value="intruder.varthrottlestep"/>
+                                                                    <xs:enumeration value="proxy.addconnectionclose"/>
+                                                                    <xs:enumeration value="proxy.converthttpslinks"/>
+                                                                    <xs:enumeration value="proxy.disableburpinterface"/>
+                                                                    <xs:enumeration value="proxy.enabledisabledfields"/>
+                                                                    <xs:enumeration value="proxy.hideextensions"/>
+                                                                    <xs:enumeration value="proxy.hideextensionsitems"/>
+                                                                    <xs:enumeration value="proxy.hideunresponded"/>
+                                                                    <xs:enumeration value="proxy.http10"/>
+                                                                    <xs:enumeration value="proxy.http10responses"/>
+                                                                    <xs:enumeration value="proxy.interceptrequests"/>
+                                                                    <xs:enumeration value="proxy.interceptresponses"/>
+                                                                    <xs:enumeration value="proxy.listener"/>
+                                                                    <xs:enumeration value="proxy.listener0"/>
+                                                                    <xs:enumeration value="proxy.matchreplacerule0"/>
+                                                                    <xs:enumeration value="proxy.matchreplacerule1"/>
+                                                                    <xs:enumeration value="proxy.matchreplacerule2"/>
+                                                                    <xs:enumeration value="proxy.matchreplacerule3"/>
+                                                                    <xs:enumeration value="proxy.matchreplacerule4"/>
+                                                                    <xs:enumeration value="proxy.ProxyUpdateCookieJar"/>
+                                                                    <xs:enumeration value="proxy.removealljavascript"/>
+                                                                    <xs:enumeration value="proxy.removejsformvalidation"/>
+                                                                    <xs:enumeration value="proxy.removelengthlimits"/>
+                                                                    <xs:enumeration value="proxy.removeobjecttags"/>
+                                                                    <xs:enumeration value="proxy.removesecurecookieflag"/>
+                                                                    <xs:enumeration value="proxy.requestrule0"/>
+                                                                    <xs:enumeration value="proxy.requestrule1"/>
+                                                                    <xs:enumeration value="proxy.requestrule2"/>
+                                                                    <xs:enumeration value="proxy.requestrule3"/>
+                                                                    <xs:enumeration value="proxy.responserule0"/>
+                                                                    <xs:enumeration value="proxy.responserule1"/>
+                                                                    <xs:enumeration value="proxy.responserule2"/>
+                                                                    <xs:enumeration value="proxy.responserule3"/>
+                                                                    <xs:enumeration value="proxy.responserule4"/>
+                                                                    <xs:enumeration value="proxy.searchcasesensitive"/>
+                                                                    <xs:enumeration value="proxy.searchnegative"/>
+                                                                    <xs:enumeration value="proxy.searchregex"/>
+                                                                    <xs:enumeration value="proxy.searchterm"/>
+                                                                    <xs:enumeration value="proxy.showextensions"/>
+                                                                    <xs:enumeration value="proxy.showextensionsitems"/>
+                                                                    <xs:enumeration value="proxy.showmimecss"/>
+                                                                    <xs:enumeration value="proxy.showmimeflash"/>
+                                                                    <xs:enumeration value="proxy.showmimehtml"/>
+                                                                    <xs:enumeration value="proxy.showmimeimages"/>
+                                                                    <xs:enumeration value="proxy.showmimeotherbinary"/>
+                                                                    <xs:enumeration value="proxy.showmimeothertext"/>
+                                                                    <xs:enumeration value="proxy.showmimescript"/>
+                                                                    <xs:enumeration value="proxy.showmimexml"/>
+                                                                    <xs:enumeration value="proxy.showonlycommented"/>
+                                                                    <xs:enumeration value="proxy.showonlyhighlighted"/>
+                                                                    <xs:enumeration value="proxy.showonlyinscope"/>
+                                                                    <xs:enumeration value="proxy.showonlyparameterized"/>
+                                                                    <xs:enumeration value="proxy.showstatus2xx"/>
+                                                                    <xs:enumeration value="proxy.showstatus3xx"/>
+                                                                    <xs:enumeration value="proxy.showstatus4xx"/>
+                                                                    <xs:enumeration value="proxy.showstatus5xx"/>
+                                                                    <xs:enumeration value="proxy.supresssburperrors"/>
+                                                                    <xs:enumeration value="proxy.unhidehiddenfields"/>
+                                                                    <xs:enumeration value="proxy.unpackgzipdeflate"/>
+                                                                    <xs:enumeration value="proxy.updaterequestcontentlength"/>
+                                                                    <xs:enumeration value="repeater.followredirects"/>
+                                                                    <xs:enumeration value="repeater.host"/>
+                                                                    <xs:enumeration value="repeater.port"/>
+                                                                    <xs:enumeration value="repeater.processcookiesinredirects"/>
+                                                                    <xs:enumeration value="repeater.RepeaterUpdateCookieJar"/>
+                                                                    <xs:enumeration value="repeater.requestb64"/>
+                                                                    <xs:enumeration value="repeater.ssl"/>
+                                                                    <xs:enumeration value="repeater.unpackgzipdeflate"/>
+                                                                    <xs:enumeration value="repeater.updateCL"/>
+                                                                    <xs:enumeration value="scanner.activecustomscopeexclude0"/>
+                                                                    <xs:enumeration value="scanner.activecustomscopeexclude1"/>
+                                                                    <xs:enumeration value="scanner.activecustomscopeexclude2"/>
+                                                                    <xs:enumeration value="scanner.activecustomscopeexclude3"/>
+                                                                    <xs:enumeration value="scanner.activecustomscopeinclude0"/>
+                                                                    <xs:enumeration value="scanner.activecustomscopetype"/>
+                                                                    <xs:enumeration value="scanner.autodeletefinisheditems"/>
+                                                                    <xs:enumeration value="scanner.changebodytocookie"/>
+                                                                    <xs:enumeration value="scanner.changebodytourl"/>
+                                                                    <xs:enumeration value="scanner.changecookietobody"/>
+                                                                    <xs:enumeration value="scanner.changecookietourl"/>
+                                                                    <xs:enumeration value="scanner.changeurltobody"/>
+                                                                    <xs:enumeration value="scanner.changeurltocookie"/>
+                                                                    <xs:enumeration value="scanner.dothrottle"/>
+                                                                    <xs:enumeration value="scanner.followredirects"/>
+                                                                    <xs:enumeration value="scanner.insertamfparams"/>
+                                                                    <xs:enumeration value="scanner.insertbodyparams"/>
+                                                                    <xs:enumeration value="scanner.insertcookies"/>
+                                                                    <xs:enumeration value="scanner.inserthttpheaders"/>
+                                                                    <xs:enumeration value="scanner.insertparamname"/>
+                                                                    <xs:enumeration value="scanner.insertrestparams"/>
+                                                                    <xs:enumeration value="scanner.inserturlparams"/>
+                                                                    <xs:enumeration value="scanner.intelligentattackselection"/>
+                                                                    <xs:enumeration value="scanner.maxinsertionpoints"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule0"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule1"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule10"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule11"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule2"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule3"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule4"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule5"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule6"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule7"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule8"/>
+                                                                    <xs:enumeration value="scanner.noninjectableparamrule9"/>
+                                                                    <xs:enumeration value="scanner.nontestableparamrule0"/>
+                                                                    <xs:enumeration value="scanner.numretries"/>
+                                                                    <xs:enumeration value="scanner.numthreads"/>
+                                                                    <xs:enumeration value="scanner.passivecustomscopeexclude0"/>
+                                                                    <xs:enumeration value="scanner.passivecustomscopeexclude1"/>
+                                                                    <xs:enumeration value="scanner.passivecustomscopeexclude2"/>
+                                                                    <xs:enumeration value="scanner.passivecustomscopeexclude3"/>
+                                                                    <xs:enumeration value="scanner.passivecustomscopeinclude0"/>
+                                                                    <xs:enumeration value="scanner.passivecustomscopetype"/>
+                                                                    <xs:enumeration value="scanner.pausebeforeretry"/>
+                                                                    <xs:enumeration value="scanner.ScannerUpdateCookieJar"/>
+                                                                    <xs:enumeration value="scanner.testcaching"/>
+                                                                    <xs:enumeration value="scanner.testclickjacking"/>
+                                                                    <xs:enumeration value="scanner.testcommandinjection"/>
+                                                                    <xs:enumeration value="scanner.testcommandinjectionblind"/>
+                                                                    <xs:enumeration value="scanner.testcommandinjectioninformed"/>
+                                                                    <xs:enumeration value="scanner.testcookies"/>
+                                                                    <xs:enumeration value="scanner.testforms"/>
+                                                                    <xs:enumeration value="scanner.testheaderinjection"/>
+                                                                    <xs:enumeration value="scanner.testheadermanipulation"/>
+                                                                    <xs:enumeration value="scanner.testheaders"/>
+                                                                    <xs:enumeration value="scanner.testinfodisclosure"/>
+                                                                    <xs:enumeration value="scanner.testLDAPinjection"/>
+                                                                    <xs:enumeration value="scanner.testlinks"/>
+                                                                    <xs:enumeration value="scanner.testmime"/>
+                                                                    <xs:enumeration value="scanner.testparams"/>
+                                                                    <xs:enumeration value="scanner.testpathtraversal"/>
+                                                                    <xs:enumeration value="scanner.testredirection"/>
+                                                                    <xs:enumeration value="scanner.testreflectedXSS"/>
+                                                                    <xs:enumeration value="scanner.testserverissues"/>
+                                                                    <xs:enumeration value="scanner.testSQLinjection"/>
+                                                                    <xs:enumeration value="scanner.testSQLinjectionboolean"/>
+                                                                    <xs:enumeration value="scanner.testSQLinjectionerror"/>
+                                                                    <xs:enumeration value="scanner.testSQLinjectionmssql"/>
+                                                                    <xs:enumeration value="scanner.testSQLinjectionmysql"/>
+                                                                    <xs:enumeration value="scanner.testSQLinjectionoracle"/>
+                                                                    <xs:enumeration value="scanner.testSQLinjectiontime"/>
+                                                                    <xs:enumeration value="scanner.teststoredXSS"/>
+                                                                    <xs:enumeration value="scanner.testviewstate"/>
+                                                                    <xs:enumeration value="scanner.testXMLSOAPinjection"/>
+                                                                    <xs:enumeration value="scanner.throttleinterval"/>
+                                                                    <xs:enumeration value="scanner.throttlerandom"/>
+                                                                    <xs:enumeration value="sequencer.doBase64Decode"/>
+                                                                    <xs:enumeration value="sequencer.doBitCompress"/>
+                                                                    <xs:enumeration value="sequencer.doBitCorrelation"/>
+                                                                    <xs:enumeration value="sequencer.doCSCount"/>
+                                                                    <xs:enumeration value="sequencer.doCSTransitions"/>
+                                                                    <xs:enumeration value="sequencer.doFIPS1"/>
+                                                                    <xs:enumeration value="sequencer.doFIPS2"/>
+                                                                    <xs:enumeration value="sequencer.doFIPS3"/>
+                                                                    <xs:enumeration value="sequencer.doFIPS4"/>
+                                                                    <xs:enumeration value="sequencer.doSpectral"/>
+                                                                    <xs:enumeration value="sequencer.ignoreAbnormalLengths"/>
+                                                                    <xs:enumeration value="sequencer.maxDeviation"/>
+                                                                    <xs:enumeration value="sequencer.numThreads"/>
+                                                                    <xs:enumeration value="sequencer.padAtEnd"/>
+                                                                    <xs:enumeration value="sequencer.padChar"/>
+                                                                    <xs:enumeration value="sequencer.SequencerUpdateCookieJar"/>
+                                                                    <xs:enumeration value="sequencer.throttle"/>
+                                                                    <xs:enumeration value="spider.apploginmode"/>
+                                                                    <xs:enumeration value="spider.checkrobotstxt"/>
+                                                                    <xs:enumeration value="spider.customheader0"/>
+                                                                    <xs:enumeration value="spider.customheader1"/>
+                                                                    <xs:enumeration value="spider.customheader2"/>
+                                                                    <xs:enumeration value="spider.customheader3"/>
+                                                                    <xs:enumeration value="spider.defaultautofillvalue"/>
+                                                                    <xs:enumeration value="spider.detectnotfound"/>
+                                                                    <xs:enumeration value="spider.dothrottle"/>
+                                                                    <xs:enumeration value="spider.formsidentitycriteria"/>
+                                                                    <xs:enumeration value="spider.formsubmissionmode"/>
+                                                                    <xs:enumeration value="spider.iteratesubmitfields"/>
+                                                                    <xs:enumeration value="spider.loginpassword"/>
+                                                                    <xs:enumeration value="spider.loginusername"/>
+                                                                    <xs:enumeration value="spider.maxformsubmissions"/>
+                                                                    <xs:enumeration value="spider.maxlinkdepth"/>
+                                                                    <xs:enumeration value="spider.maxparamrequestsperurl"/>
+                                                                    <xs:enumeration value="spider.numretries"/>
+                                                                    <xs:enumeration value="spider.numthreads"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule0"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule1"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule10"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule11"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule12"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule13"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule14"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule15"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule16"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule17"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule18"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule19"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule2"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule20"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule3"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule4"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule5"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule6"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule7"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule8"/>
+                                                                    <xs:enumeration value="spider.paramautofillrule9"/>
+                                                                    <xs:enumeration value="spider.pausebeforeretry"/>
+                                                                    <xs:enumeration value="spider.processproxyrequests"/>
+                                                                    <xs:enumeration value="spider.proxylinkdepth"/>
+                                                                    <xs:enumeration value="spider.requestdynpageswithoutparams"/>
+                                                                    <xs:enumeration value="spider.requestfolderroots"/>
+                                                                    <xs:enumeration value="spider.requesttexttypesonly"/>
+                                                                    <xs:enumeration value="spider.scopeexclude0"/>
+                                                                    <xs:enumeration value="spider.scopeexclude1"/>
+                                                                    <xs:enumeration value="spider.scopeexclude2"/>
+                                                                    <xs:enumeration value="spider.scopeexclude3"/>
+                                                                    <xs:enumeration value="spider.scopeinclude0"/>
+                                                                    <xs:enumeration value="spider.scopetype"/>
+                                                                    <xs:enumeration value="spider.setunmatchedfields"/>
+                                                                    <xs:enumeration value="spider.SpiderUpdateCookieJar"/>
+                                                                    <xs:enumeration value="spider.sslprotocol0"/>
+                                                                    <xs:enumeration value="spider.throttleinterval"/>
+                                                                    <xs:enumeration value="spider.throttlerandom"/>
+                                                                    <xs:enumeration value="spider.usehttp11"/>
+                                                                    <xs:enumeration value="spider.usereferer"/>
+                                                                    <xs:enumeration value="suite.allowHttpRequestsInHtmlRendering"/>
+                                                                    <xs:enumeration value="suite.allowUnsafeRenegotiation"/>
+                                                                    <xs:enumeration value="suite.autoSaveFolder"/>
+                                                                    <xs:enumeration value="suite.autoSaveInterval"/>
+                                                                    <xs:enumeration value="suite.charsetMode"/>
+                                                                    <xs:enumeration value="suite.colouriseRequests"/>
+                                                                    <xs:enumeration value="suite.colouriseResponses"/>
+                                                                    <xs:enumeration value="suite.dnstimeout"/>
+                                                                    <xs:enumeration value="suite.doAutoSave"/>
+                                                                    <xs:enumeration value="suite.dowwwauth"/>
+                                                                    <xs:enumeration value="suite.enableAllSupportedSuites"/>
+                                                                    <xs:enumeration value="suite.faileddnstimeout"/>
+                                                                    <xs:enumeration value="suite.hostresolverrule0"/>
+                                                                    <xs:enumeration value="suite.hotkey0"/>
+                                                                    <xs:enumeration value="suite.inScopeOnly"/>
+                                                                    <xs:enumeration value="suite.macro0"/>
+                                                                    <xs:enumeration value="suite.messageFont"/>
+                                                                    <xs:enumeration value="suite.messageFontSize"/>
+                                                                    <xs:enumeration value="suite.messageFontSmoothing"/>
+                                                                    <xs:enumeration value="suite.normaltimeout"/>
+                                                                    <xs:enumeration value="suite.promptforcredentials"/>
+                                                                    <xs:enumeration value="suite.readtilclosetimeout"/>
+                                                                    <xs:enumeration value="suite.redirDo3xxLocation"/>
+                                                                    <xs:enumeration value="suite.redirDoJavascriptDriven"/>
+                                                                    <xs:enumeration value="suite.redirDoMetaRefresh"/>
+                                                                    <xs:enumeration value="suite.redirDoXxxLocation"/>
+                                                                    <xs:enumeration value="suite.redirRefreshHeader"/>
+                                                                    <xs:enumeration value="suite.remove100continueheaders"/>
+                                                                    <xs:enumeration value="suite.saveOnExit"/>
+                                                                    <xs:enumeration value="suite.sessionrule0"/>
+                                                                    <xs:enumeration value="suite.socksproxyhost"/>
+                                                                    <xs:enumeration value="suite.socksproxypassword"/>
+                                                                    <xs:enumeration value="suite.socksproxyport"/>
+                                                                    <xs:enumeration value="suite.socksproxyusername"/>
+                                                                    <xs:enumeration value="suite.storestreamingresponses"/>
+                                                                    <xs:enumeration value="suite.stripCEfromstreamingresponses"/>
+                                                                    <xs:enumeration value="suite.tempDir"/>
+                                                                    <xs:enumeration value="suite.understand100continue"/>
+                                                                    <xs:enumeration value="suite.upstreamproxyrule0"/>
+                                                                    <xs:enumeration value="suite.usesocksproxy"/>
+                                                                    <xs:enumeration value="target.droprequestsscopeexclude0"/>
+                                                                    <xs:enumeration value="target.droprequestsscopeexclude1"/>
+                                                                    <xs:enumeration value="target.droprequestsscopeexclude2"/>
+                                                                    <xs:enumeration value="target.droprequestsscopeexclude3"/>
+                                                                    <xs:enumeration value="target.droprequestsscopeinclude0"/>
+                                                                    <xs:enumeration value="target.droprequestsscopetype"/>
+                                                                    <xs:enumeration value="target.hideemptyfolders"/>
+                                                                    <xs:enumeration value="target.hideextensions"/>
+                                                                    <xs:enumeration value="target.hideextensionsitems"/>
+                                                                    <xs:enumeration value="target.hidenotfound"/>
+                                                                    <xs:enumeration value="target.scopeexclude0"/>
+                                                                    <xs:enumeration value="target.scopeexclude1"/>
+                                                                    <xs:enumeration value="target.scopeexclude2"/>
+                                                                    <xs:enumeration value="target.scopeexclude3"/>
+                                                                    <xs:enumeration value="target.scopeexclude4"/>
+                                                                    <xs:enumeration value="target.searchcasesensitive"/>
+                                                                    <xs:enumeration value="target.searchnegative"/>
+                                                                    <xs:enumeration value="target.searchregex"/>
+                                                                    <xs:enumeration value="target.searchterm"/>
+                                                                    <xs:enumeration value="target.showextensions"/>
+                                                                    <xs:enumeration value="target.showextensionsitems"/>
+                                                                    <xs:enumeration value="target.showmimecss"/>
+                                                                    <xs:enumeration value="target.showmimeflash"/>
+                                                                    <xs:enumeration value="target.showmimehtml"/>
+                                                                    <xs:enumeration value="target.showmimeimages"/>
+                                                                    <xs:enumeration value="target.showmimeotherbinary"/>
+                                                                    <xs:enumeration value="target.showmimeothertext"/>
+                                                                    <xs:enumeration value="target.showmimescript"/>
+                                                                    <xs:enumeration value="target.showmimexml"/>
+                                                                    <xs:enumeration value="target.showonlycommented"/>
+                                                                    <xs:enumeration value="target.showonlyhighlighted"/>
+                                                                    <xs:enumeration value="target.showonlyinscope"/>
+                                                                    <xs:enumeration value="target.showonlyparameterized"/>
+                                                                    <xs:enumeration value="target.showonlyrequested"/>
+                                                                    <xs:enumeration value="target.showstatus2xx"/>
+                                                                    <xs:enumeration value="target.showstatus3xx"/>
+                                                                    <xs:enumeration value="target.showstatus4xx"/>
+                                                                    <xs:enumeration value="target.showstatus5xx"/>
+                                                                    <xs:enumeration value="target.streamingresponsesscopeinclude0"/>
+                                                                    <xs:enumeration value="target.TargetUpdateCookieJar"/>
+                                                                </xs:restriction>
+                                                            </xs:simpleType>
+                                                        </xs:attribute>
+                                                    </xs:extension>
+                                                </xs:simpleContent>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>    
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="report_writer"  minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="output_filepath">
+                                <xs:complexType>
+                                    <xs:attribute name="path" type="filepathType" use="required"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="issue_priority_to_start_writing">
+                                <xs:complexType>
+                                    <xs:attribute name="prio" use="required">
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:string">
+                                                <xs:enumeration value="Information"/>
+                                                <xs:enumeration value="Low"/>
+                                                <xs:enumeration value="Medium"/>
+                                                <xs:enumeration value="High"/>
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:attribute>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="full_qualified_class_name" use="required">
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:pattern value="([a-z_]{1}[a-z0-9_]*(\.[a-zA-Z_]{1}[a-zA-Z0-9_]*)*)"/>
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:attribute>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>   
+</xs:schema>
