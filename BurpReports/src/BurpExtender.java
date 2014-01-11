@@ -13,31 +13,31 @@ import com.burpreports.BurpReports;
  */
 public class BurpExtender implements IBurpExtender {
 
-    private BurpReports burpUnit = new BurpReports();
+    private BurpReports burpReports = new BurpReports();
 
     @Override
     public void setCommandLineArgs(String[] args) {
-        burpUnit.setCommandLineArgs(args);
+        burpReports.setCommandLineArgs(args);
     }
 
     @Override
     public void registerExtenderCallbacks(IBurpExtenderCallbacks callbacks) {
-        burpUnit.registerExtenderCallbacks(callbacks);
+        burpReports.registerExtenderCallbacks(callbacks);
     }
 
     @Override
     public void processHttpMessage(String toolName, boolean messageIsRequest, IHttpRequestResponse messageInfo) {
-        burpUnit.processHttpMessage(toolName, messageIsRequest, messageInfo);
+        burpReports.processHttpMessage(toolName, messageIsRequest, messageInfo);
     }
 
     @Override
     public void newScanIssue(IScanIssue issue) {
-        burpUnit.newScanIssue(issue);
+        burpReports.newScanIssue(issue);
     }
 
     @Override
     public void applicationClosing() {
-        burpUnit.applicationClosing();
+        burpReports.applicationClosing();
     }
 
     @Override

@@ -44,6 +44,7 @@ public class BurpReports {
     private static final String RESULT_URLS_FILE_POSTFIX = ".urls";
     private int SCAN_QUEUE_CHECK_INTERVALL = 2000;
     private int MAX_SCAN_QUEUE_SIZE = 100;
+    private static final String BURP_REPORTS_DEFAULT_CONFIG = "burp_reports_config.xml";
     private BufferedWriter outurls;
     private BufferedReader urlsFromFileToScanReader;
     private IBurpExtenderCallbacks mcallBacks;
@@ -100,7 +101,7 @@ public class BurpReports {
             if (args.length == 2) {
                 burpConfigPropertiesFileName = args[1];
             } else {
-                burpConfigPropertiesFileName = "burp_unit_config.xml";
+                burpConfigPropertiesFileName = BURP_REPORTS_DEFAULT_CONFIG;
             }
 
 
@@ -271,15 +272,16 @@ public class BurpReports {
                     while (!scanqueue.isEmpty()) {
                         System.out.println("\nChecking scan queue: \t" + new Date());
                         System.out.println("\nCurrent Queue size: \t" + scanqueue.size());
-
+                        
                         IScanQueueItem currentItem;
-
+                       
                         synchronized (scanqueue) {
                             for (Iterator<IScanQueueItem> currentQueueItemIt = scanqueue.iterator(); currentQueueItemIt.hasNext();) {
                                 currentItem = currentQueueItemIt.next();
                                 if (currentItem.getPercentageComplete() == 100) {
                                     currentQueueItemIt.remove();
                                 }
+                                System.out.print(currentItem.getPercentageComplete()+"|");
                             }
                         }
 

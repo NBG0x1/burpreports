@@ -1,6 +1,5 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ * Writes the scan results as html into a file.
  */
 package com.burpreports.report;
 
@@ -13,7 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 /**
- *
+ * HTMLReport Writer to write html scan reports
+ * 
  * @author runtz
  */
 public class HTMLReportWriter implements IssueReportWritable {

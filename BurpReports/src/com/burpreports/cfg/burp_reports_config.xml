@@ -12,15 +12,15 @@
             <property name="spider.maxlinkdepth">0</property>
         </burp_config_overwrites>
     </general_settings>
-    <report_writer full_qualified_class_name="com.burpunit.report.HTMLReportWriter">
+    <report_writer full_qualified_class_name="com.burpreports.report.HTMLReportWriter">
         <output_filepath path="./"/>
         <issue_priority_to_start_writing prio="High"/>
     </report_writer>
-    <report_writer full_qualified_class_name="com.burpunit.report.XUnitReportWriter">
+    <report_writer full_qualified_class_name="com.burpreports.report.XUnitReportWriter">
         <output_filepath path="./"/>
         <issue_priority_to_start_writing prio="High"/>
     </report_writer>
-    <report_writer full_qualified_class_name="com.burpunit.report.BurpStateWriter">
+    <report_writer full_qualified_class_name="com.burpreports.report.BurpStateWriter">
         <output_filepath path="./"/>
         <issue_priority_to_start_writing prio="High"/>
     </report_writer>
