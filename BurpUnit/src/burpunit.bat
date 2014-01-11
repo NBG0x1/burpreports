@@ -1,2 +1,0 @@
-REM sample headless call of BurpSuite with two param, the url providing file and the prefix for the reporting files
-java -Djava.awt.headless=true -classpath BurpUnit.jar;burpsuite_pro_v1.5rc3.jar burp.StartBurp urls_to_scan.txt results
