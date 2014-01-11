@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/C:/_tino/sandbox/workspace_netbeans/BurpUnit/BurpUnit/src/com/burpunit/xsd/junit.xsd" uri="xml-resources/jaxb/junitreport/junit.xsd"/>
+    <system systemId="file:/C:/_tino/sandbox/workspace_netbeans/BurpUnit/BurpUnit/src/com/burpunit/cfg/burp_unit.xsd" uri="xml-resources/jaxb/burpunit/burp_unit.xsd"/>
+    <system systemId="file:/C:/_tino/sandbox/workspace_netbeans/BurpUnit/BurpUnit/src/com/burpunit/cfg/xsd/x_unit.xsd" uri="xml-resources/jaxb/x_unit/x_unit.xsd"/>
+    <system systemId="file:/C:/_tino/sandbox/workspace_netbeans/BurpUnit/BurpUnit/src/com/burpunit/cfg/xsd/burp_unit_config.xsd" uri="xml-resources/jaxb/burp_unit_config/burp_unit_config.xsd"/>
+    <system systemId="file:/C:/_tino/sandbox/workspace_netbeans/BurpUnit/BurpUnit/src/com/burpunit/report/xsd/x_unit.xsd" uri="xml-resources/jaxb/x_unit/x_unit.xsd"/>
+    <system systemId="file:/C:/_tino/sandbox/workspace_netbeans/BurpUnit/BurpUnit/src/com/burpunit/cfg/burp_reports_config.xml" uri="xml-resources/jaxb/BurpReportsConfig/burp_reports_config.xml"/>
+    <system systemId="file:/C:/_tino/sandbox/workspace_netbeans/BurpUnit/BurpUnit/src/com/burpreports/cfg/xsd/burp_unit_config.xsd" uri="xml-resources/jaxb/BurpReportsConfig/burp_unit_config.xsd"/>
+    <system systemId="file:/C:/_tino/sandbox/workspace_netbeans/BurpUnit/BurpUnit/src/com/burpreports/report/xsd/x_unit.xsd" uri="xml-resources/jaxb/BurpReportsReportXUnit/x_unit.xsd"/>
+</catalog>
